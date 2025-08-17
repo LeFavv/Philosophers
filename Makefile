@@ -6,7 +6,7 @@
 #    By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/06/26 12:48:55 by kevwang           #+#    #+#              #
-#    Updated: 2025/08/17 16:25:57 by vafavard         ###   ########.fr        #
+#    Updated: 2025/08/17 17:18:27 by vafavard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -33,7 +33,8 @@ ${NAME}: ${SRC}
 %.o:%.c
 	${CC} ${CFLAGS} -c $^
 
-clean:	philo.o \
+clean:
+	rm -f philo.o \
 		philo_init.o \
 		philo_utils.o
 

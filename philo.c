@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 01:49:13 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/17 16:53:23 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/17 17:13:25 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ int	init_philosophers(t_all *all)
 	all->philo = malloc(sizeof(t_philo) * all->args.nb_philo);
 	if (!all->philo)
 		return (0);
-	all->forks = malloc(sizeof(t_philo) * all->args.nb_philo);
+	all->forks = malloc(sizeof(pthread_mutex_t) * all->args.nb_philo);
 	if (!all->forks)
 		return (0);
 	while (i < all->args.nb_philo)
@@ -158,7 +158,7 @@ void	print_status(t_philo *philo, char *str)
 	
 	gettimeofday(&philo->all->end, NULL);
 	time = time_diff_ms(&philo->all->start, &philo->all->end);
-	printf("%ld %d %s", time, philo->id, str);
+	printf("%ld %d %s\n", time, philo->id, str);
 }
 
 void take_forks(t_philo *philo)
@@ -200,8 +200,7 @@ int create_threads(t_all *all)
     
     while (i < all->args.nb_philo)
     {
-        if (pthread_create(&all->philo[i].thread, NULL, 
-                          philosopher_routine, &all->philo[i]) != 0)
+        if (pthread_create(&all->philo[i].thread, NULL, philosopher_routine, &all->philo[i]) != 0)
             return (0);
         i++;
     }
@@ -245,16 +244,6 @@ int main(int argc, char **argv)
 		tab = malloc(sizeof(long) * (argc - 1));
 		if (!tab)
 			return (free(args), free(all), 1);
-		// printf("%d\n", argc- 1);
-		// printf("%s\n", argv[i + 1]);
-		// i++;
-		// printf("%s\n", argv[i + 1]);
-		// i++;
-		// printf("%s\n", argv[i + 1]);
-		// i++;
-		// printf("%s\n", argv[i + 1]);
-		// i++;
-		// return (0);
 		while (i < argc - 1)
 		{
 			
@@ -263,17 +252,22 @@ int main(int argc, char **argv)
 		}
 		if (!init_struct_5(args, tab, argc - 1))
 			return (free(tab), free(args), free(all), 1);
-		
 		all->args = *args;
 		free(args);
 		free(tab);
-		printf("nb_philo = %ld\n", all->args.nb_philo);
-		printf("time_to_die = %ld\n", all->args.time_to_die);
-		printf("time_to_eat = %ld\n", all->args.time_to_eat);
-		printf("time_to_sleep = %ld\n", all->args.time_to_sleep);
-		printf("number_of_times_each_philosopher_must_eat = %ld\n", all->args.number_of_times_each_philosopher_must_eat);
+		if (!init_philosophers(all))
+    		return (free(all), 1);
+		// printf("nb_philo = %ld\n", all->args.nb_philo);
+		// printf("time_to_die = %ld\n", all->args.time_to_die);
+		// printf("time_to_eat = %ld\n", all->args.time_to_eat);
+		// printf("time_to_sleep = %ld\n", all->args.time_to_sleep);
+		// printf("number_of_times_each_philosopher_must_eat = %ld\n", all->args.number_of_times_each_philosopher_must_eat);
+		create_threads(all);
+		join_threads(all);    // Attendre que les threads finissent
+		mutex_destroy(all);   // Détruire les mutex
+		free(all->philo);     // Libérer les philosophes
+		free(all->forks);     // Libérer les fourchettes
 		free(all);
-
 	}
 	return (0);
 }
