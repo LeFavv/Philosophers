@@ -6,11 +6,26 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 01:49:13 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/17 04:57:53 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/17 15:38:14 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+long	time_diff_ms(struct timeval *start, struct timeval *end);
+void	*sleep_routine(t_all **all);
+void	*eat_routine(t_all **all);
+int		mutex_destroy(t_all *all);
+int		init_philosophers(t_all *all);
+int		init_philosophers(t_all *all);
+void	*philosopher_routine(void *arg);
+void	print_status(t_philo *philo, char *str);
+void	take_forks(t_philo *philo);
+int		join_threads(t_all *all);
+int		create_threads(t_all *all);
+void	put_forks(t_philo *philo);
+void	can_eat_same_time(t_all **all);
+
 
 //chaque philo doit etre un thread
 //bien penser a tout init
@@ -41,14 +56,15 @@
 
 //simulation stop si un philo meurt ou si les philos on mange n fois necessaires (derniers argument main)
 
+//mutex lock et unlock retournent 0 en cas de reussite
+//impair droite ??
+//pari gauche ??
+
+
 long time_diff_ms(struct timeval *start, struct timeval *end) 
 {
     return (end->tv_sec - start->tv_sec) * 1000
          + (end->tv_usec - start->tv_usec) / 1000;
-}
-
-void	*thinking_routine(t_all **all)
-{
 }
 
 void	*sleep_routine(t_all **all)
@@ -65,12 +81,149 @@ void	*eat_routine(t_all **all)
 	usleep((*all)->args.time_to_sleep);
 }
 
+int	mutex_destroy(t_all *all)
+{
+	int i = 0;
+	
+	while (i < all->args.nb_philo)
+	{
+		if (pthread_mutex_destroy(&all->forks[i]) != 0)
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
+int	init_philosophers(t_all *all)
+{
+	int	i;
+
+	i = 0;
+	all->philo = malloc(sizeof(t_philo) * all->args.nb_philo);
+	if (!all->philo)
+		return (0);
+	all->forks = malloc(sizeof(t_philo) * all->args.nb_philo);
+	if (!all->forks)
+		return (0);
+	while (i < all->args.nb_philo)
+	{
+		if (pthread_mutex_init(&all->forks[i], NULL) != 0)
+			return (0);
+		i++;
+	}
+	i = 0;
+	 while (i < all->args.nb_philo)
+    {
+        all->philo[i].id = i;
+        all->philo[i].left_fork = i;
+        all->philo[i].right_fork = (i + 1) % all->args.nb_philo;
+        all->philo[i].all = all;
+        all->philo[i].meals_eaten = 0;
+        i++;
+    }
+	return (1);
+}
+
+void *philosopher_routine(void *arg)
+{
+    t_philo *philo = (t_philo *)arg;
+    
+    while (all_ate(philo) || there_is_dead(philo->all))
+    {
+        // Penser
+        print_status(philo, "is thinking");
+        
+        // Manger
+        take_forks(philo);
+        print_status(philo, "is eating");
+        eat(philo);
+        put_forks(philo);
+        
+        // Dormir
+        print_status(philo, "is sleeping");
+        ft_usleep(philo->all->args.time_to_sleep);
+    }
+    return (NULL);
+}
+
+void	print_status(t_philo *philo, char *str)
+{
+	long time;
+	
+	gettimeofday(&philo->all->end, NULL);
+	time = time_diff_ms(&philo->all->start, &philo->all->end);
+	printf("%ld %d %s", time, philo->id, str);
+}
+
+void take_forks(t_philo *philo)
+{
+    // Pour éviter les deadlocks, toujours prendre la fourchette 
+    // avec l'index le plus petit en premier
+    if (philo->left_fork < philo->right_fork)
+    {
+        pthread_mutex_lock(&philo->all->forks[philo->left_fork]);
+        print_status(philo, "has taken a fork");
+        pthread_mutex_lock(&philo->all->forks[philo->right_fork]);
+        print_status(philo, "has taken a fork");
+    }
+    else
+    {
+        pthread_mutex_lock(&philo->all->forks[philo->right_fork]);
+        print_status(philo, "has taken a fork");
+        pthread_mutex_lock(&philo->all->forks[philo->left_fork]);
+        print_status(philo, "has taken a fork");
+    }
+}
+
+int	join_threads(t_all *all)
+{
+	int i = 0;
+    
+    while (i < all->args.nb_philo)
+    {
+        if (pthread_join(&all->philo[i].thread, NULL) != 0)
+            return (0);
+        i++;
+    }
+    return (1);
+}
+
+int create_threads(t_all *all)
+{
+    int i = 0;
+    
+    while (i < all->args.nb_philo)
+    {
+        if (pthread_create(&all->philo[i].thread, NULL, 
+                          philosopher_routine, &all->philo[i]) != 0)
+            return (0);
+        i++;
+    }
+    return (1);
+}
+
+void put_forks(t_philo *philo)
+{
+    pthread_mutex_unlock(&philo->all->forks[philo->left_fork]);
+    pthread_mutex_unlock(&philo->all->forks[philo->right_fork]);
+}
+
+void	can_eat_same_time(t_all **all)
+{
+	if ((*all)->args.nb_philo % 2 == 0)
+		(*all)->eat_same_time = (*all)->args.nb_philo / 2;
+	else
+		(*all)->eat_same_time = ((*all)->args.nb_philo - 1)/ 2;
+}
+
+
+
 int main(int argc, char **argv)
 {
 	t_args	*args;
 	t_all	*all;
 	long	*tab;
-	int i = 0;
+	int		i = 0;
 
 	if (argc == 5)
 	{
