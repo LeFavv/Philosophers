@@ -6,14 +6,14 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 01:49:13 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/17 15:38:14 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/17 16:53:23 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
 long	time_diff_ms(struct timeval *start, struct timeval *end);
-void	*sleep_routine(t_all **all);
+void	sleep_routine(t_all **all);
 void	*eat_routine(t_all **all);
 int		mutex_destroy(t_all *all);
 int		init_philosophers(t_all *all);
@@ -25,7 +25,6 @@ int		join_threads(t_all *all);
 int		create_threads(t_all *all);
 void	put_forks(t_philo *philo);
 void	can_eat_same_time(t_all **all);
-
 
 //chaque philo doit etre un thread
 //bien penser a tout init
@@ -67,19 +66,19 @@ long time_diff_ms(struct timeval *start, struct timeval *end)
          + (end->tv_usec - start->tv_usec) / 1000;
 }
 
-void	*sleep_routine(t_all **all)
-{
-	gettimeofday(&(*all)->end, NULL);
-	printf("%s%ld %d is sleeping%s\n", YELLOW, time_diff_ms(&(*all)->start, &(*all)->end), 0, YELLOW);
-	usleep((*all)->args.time_to_sleep);
-}
+// void	sleep_routine(t_all **all)
+// {
+// 	gettimeofday(&(*all)->end, NULL);
+// 	printf("%s%ld %d is sleeping%s\n", YELLOW, time_diff_ms(&(*all)->start, &(*all)->end), 0, YELLOW);
+// 	usleep((*all)->args.time_to_sleep);
+// }
 
-void	*eat_routine(t_all **all)
-{
-	gettimeofday(&(*all)->end, NULL);
-	printf("%s%ld %d is eating%s\n", BLUE, time_diff_ms(&(*all)->start, &(*all)->end), 0, BLUE);
-	usleep((*all)->args.time_to_sleep);
-}
+// void	*eat_routine(t_all **all)
+// {
+// 	gettimeofday(&(*all)->end, NULL);
+// 	printf("%s%ld %d is eating%s\n", BLUE, time_diff_ms(&(*all)->start, &(*all)->end), 0, BLUE);
+// 	usleep((*all)->args.time_to_sleep);
+// }
 
 int	mutex_destroy(t_all *all)
 {
@@ -124,11 +123,18 @@ int	init_philosophers(t_all *all)
 	return (1);
 }
 
+void	eat(t_philo *philo)
+{
+	philo->meals_eaten += 1;
+	usleep(philo->all->args.time_to_sleep);
+	gettimeofday(&philo->last_meal, NULL); //a savoir comment s'en servir et ne pas rater si un philo doit mourir de faim
+}
+
 void *philosopher_routine(void *arg)
 {
     t_philo *philo = (t_philo *)arg;
-    
-    while (all_ate(philo) || there_is_dead(philo->all))
+    // while (all_ate(philo) || there_is_dead(philo->all))
+    while (1)
     {
         // Penser
         print_status(philo, "is thinking");
@@ -141,7 +147,7 @@ void *philosopher_routine(void *arg)
         
         // Dormir
         print_status(philo, "is sleeping");
-        ft_usleep(philo->all->args.time_to_sleep);
+        usleep(philo->all->args.time_to_sleep);
     }
     return (NULL);
 }
@@ -181,7 +187,7 @@ int	join_threads(t_all *all)
     
     while (i < all->args.nb_philo)
     {
-        if (pthread_join(&all->philo[i].thread, NULL) != 0)
+        if (pthread_join(all->philo[i].thread, NULL) != 0)
             return (0);
         i++;
     }
@@ -225,33 +231,49 @@ int main(int argc, char **argv)
 	long	*tab;
 	int		i = 0;
 
-	if (argc == 5)
+	if (argc == 5 || argc == 6)
 	{
-		gettimeofday(&all->start, NULL);
-		tab = malloc(sizeof(long) * 4);
-		if (!tab)
+		// Allocation des structures
+		args = malloc(sizeof(t_args));
+		if (!args)
 			return (1);
-		while (i < 4)
+		all = malloc(sizeof(t_all));
+		if (!all)
+			return (free(args), 1);
+		
+		gettimeofday(&all->start, NULL);
+		tab = malloc(sizeof(long) * (argc - 1));
+		if (!tab)
+			return (free(args), free(all), 1);
+		// printf("%d\n", argc- 1);
+		// printf("%s\n", argv[i + 1]);
+		// i++;
+		// printf("%s\n", argv[i + 1]);
+		// i++;
+		// printf("%s\n", argv[i + 1]);
+		// i++;
+		// printf("%s\n", argv[i + 1]);
+		// i++;
+		// return (0);
+		while (i < argc - 1)
 		{
-			tab[i] = ft_atol(argv[i + 2]);
+			
+			tab[i] = ft_atol(argv[i + 1]);
 			i++;
 		}
-		if (!init_struct_5(&args, tab))
-			return (free(tab),1);
-	}
-	else if (argc == 6)
-	{
-		gettimeofday(&all->start, NULL);
-		tab = malloc(sizeof(long) * 5);
-		if (!tab)
-			return (1);
-		while (i < 5)
-		{
-			tab[i] = ft_atol(argv[i + 2]);
-			i++;
-		}
-		if (!init_struct_5(&args, tab))
-			return (free(tab),1);
+		if (!init_struct_5(args, tab, argc - 1))
+			return (free(tab), free(args), free(all), 1);
+		
+		all->args = *args;
+		free(args);
+		free(tab);
+		printf("nb_philo = %ld\n", all->args.nb_philo);
+		printf("time_to_die = %ld\n", all->args.time_to_die);
+		printf("time_to_eat = %ld\n", all->args.time_to_eat);
+		printf("time_to_sleep = %ld\n", all->args.time_to_sleep);
+		printf("number_of_times_each_philosopher_must_eat = %ld\n", all->args.number_of_times_each_philosopher_must_eat);
+		free(all);
+
 	}
 	return (0);
 }

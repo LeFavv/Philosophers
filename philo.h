@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 01:44:03 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/17 15:14:13 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/17 16:16:40 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,9 @@
 #define GREEN "\e[32m"
 #define	BLUE "\e[34m"
 
+typedef struct s_philo t_philo;
+typedef struct s_all t_all;
+
 typedef struct s_args
 {
 	long	nb_philo;
@@ -37,6 +40,23 @@ typedef struct s_args
 	long	time_to_sleep;
 	long	number_of_times_each_philosopher_must_eat;
 }	t_args;
+
+
+typedef struct s_all
+{
+	int				nb_forks;
+	struct timeval	start;
+	struct timeval	end;
+	t_args			args;
+	pthread_t		*threads; //tableau de thread ?
+	int				eat_same_time;
+	int				eating;
+	int				nb_ate; //nombre de philos qui ont mange ce tour si (revient a zero une fois qu'ils ont tous mange)
+	int				nb_round_eat; //si == number_of_times_each_philosopher_must_eat ==> stop la simulation
+	pthread_mutex_t			*forks; // Dans init malloc * nb_philo
+	pthread_mutex_t			print_mutex;
+	t_philo	*philo;
+}	t_all;
 
 typedef struct s_philo
 {
@@ -49,28 +69,29 @@ typedef struct s_philo
 	struct timeval last_meal;
 }	t_philo;
 
-typedef struct s_all
-{
-	int				nb_forks;
-	struct timeval	start;
-	struct timeval	end;
-	t_args			args;
-	pthread_t		*threads; //tableau de thread ?
-	int				nb_forks; // == nb_philo
-	int				eat_same_time;
-	int				eating;
-	int				nb_ate; //nombre de philos qui ont mange ce tour si (revient a zero une fois qu'ils ont tous mange)
-	int				nb_round_eat; //si == number_of_times_each_philosopher_must_eat ==> stop la simulation
-	pthread_mutex_t			*forks; // Dans init malloc * nb_philo
-	pthread_mutex_t			print_mutex;
-	t_philo	*philo;
-}	t_all;
-
-
 typedef struct s_status
 {
 	int	nb_philo;
 	int status;
 }	t_status;
+
+
+int		init_struct_5(t_args *args, long *tab, int nb);
+long	ft_atol(char *str);
+long	time_diff_ms(struct timeval *start, struct timeval *end);
+void	sleep_routine(t_all **all);
+void	*eat_routine(t_all **all);
+int		mutex_destroy(t_all *all);
+int		init_philosophers(t_all *all);
+int		init_philosophers(t_all *all);
+void	*philosopher_routine(void *arg);
+void	print_status(t_philo *philo, char *str);
+void	take_forks(t_philo *philo);
+int		join_threads(t_all *all);
+int		create_threads(t_all *all);
+void	put_forks(t_philo *philo);
+void	can_eat_same_time(t_all **all);
+
+
 
 #endif
