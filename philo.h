@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 01:44:03 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/17 02:06:00 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/17 03:03:26 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,11 @@ typedef struct s_args
 
 typedef struct s_all
 {
-	int	nb_forks;
-	struct timeval start;
-	struct timeval end;
+	int				nb_forks;
+	struct timeval	start;
+	struct timeval	end;
+	t_args			args;
+	int				nb_forks;
 }	t_all;
 
 #endif
