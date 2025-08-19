@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 01:44:03 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/17 17:05:54 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/19 15:20:54 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@
 #define RED "\e[31m"
 #define GREEN "\e[32m"
 #define	BLUE "\e[34m"
+#define END_COLOR "\033[00m"
 
 typedef struct s_philo t_philo;
 typedef struct s_all t_all;
@@ -47,6 +48,7 @@ typedef struct s_all
 	int				nb_forks;
 	struct timeval	start;
 	struct timeval	end;
+	int	there_is_dead;
 	t_args			args;
 	pthread_t		*threads; //tableau de thread ?
 	int				eat_same_time;
@@ -85,13 +87,11 @@ int		mutex_destroy(t_all *all);
 int		init_philosophers(t_all *all);
 int		init_philosophers(t_all *all);
 void	*philosopher_routine(void *arg);
-void	print_status(t_philo *philo, char *str);
+void	print_status(t_philo **philo, char *str);
 void	take_forks(t_philo *philo);
 int		join_threads(t_all *all);
 int		create_threads(t_all *all);
 void	put_forks(t_philo *philo);
 void	can_eat_same_time(t_all **all);
-
-
 
 #endif
