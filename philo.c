@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 01:49:13 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/19 15:39:19 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/20 11:43:54 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ int	init_philosophers(t_all *all)
 	all->there_is_dead = 0;
 	 while (i < all->args.nb_philo)
     {
-        all->philo[i].id = i;
+        all->philo[i].id = i + 1;
         all->philo[i].left_fork = i;
         all->philo[i].right_fork = (i + 1) % all->args.nb_philo;
         all->philo[i].all = all;
@@ -107,12 +107,12 @@ int	no_dead(t_philo **philo)
 void *philo_routine_argc_6(void *arg)
 {
     t_philo *philo = (t_philo *)arg;
-	// int i = 0;
 	int nb_philo;
 	int round;
 	
 	nb_philo = philo->all->args.nb_philo;
 	round = 0;
+	
     while (round != nb_philo && !no_dead(&philo))
     {
         // Penser
@@ -141,15 +141,25 @@ void *philosopher_routine(void *arg)
 		philo_routine_argc_6(arg);
 		return (NULL);
 	}
-	
+	// if (philo->all->args.nb_philo == 1)
+	// {
+	// 	print_status(&philo, "is thinking");
+	// 	usleep(philo->all->args.time_to_sleep * 1000);
+	// 	if (!no_dead(&philo))
+    //     {
+    //         print_status(&philo, "died");
+    //        	return (NULL);
+    //     }
+		
+	// }
     while (1)  // Boucle infinie, on sort quand mort
     {
-        print_status(&philo, "is thinking");
+        print_status(&philo, "is thinking 💻");
         take_forks(philo);
-        print_status(&philo, "is eating");
+        print_status(&philo, "\e[32mis eating\033[00m 🍔");
         eat(philo);
         put_forks(philo);
-        print_status(&philo, "is sleeping");
+        print_status(&philo, "\e[34mis sleeping\033[00m 💤");
         usleep(philo->all->args.time_to_sleep * 1000);
         
         // Vérifier la mort APRÈS avoir dormi (quand on a vraiment faim)
@@ -191,19 +201,21 @@ void	print_status(t_philo **philo, char *str)
 
 void take_forks(t_philo *philo)
 {
+	// if (philo->all->args.nb_philo == 1)
+	// 	return ;
     if (philo->left_fork < philo->right_fork)
     {
         pthread_mutex_lock(&philo->all->forks[philo->left_fork]);
-		print_status(&philo, "has taken a fork");
+		print_status(&philo, "\e[33mhas taken a fork\033[00m");
         pthread_mutex_lock(&philo->all->forks[philo->right_fork]);
-        print_status(&philo, "has taken a fork");
+        print_status(&philo, "\e[33mhas taken a fork\033[00m");
     }
     else
     {
         pthread_mutex_lock(&philo->all->forks[philo->right_fork]);
-        print_status(&philo, "has taken a fork");
+        print_status(&philo, "\e[33mhas taken a fork\033[00m");
         pthread_mutex_lock(&philo->all->forks[philo->left_fork]);
-        print_status(&philo, "has taken a fork");
+        print_status(&philo, "\e[33mhas taken a fork\033[00m");
     }
 }
 
