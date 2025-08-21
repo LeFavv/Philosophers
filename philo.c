@@ -1,39 +1,15 @@
-/* ***********************void	can_eat_same_time(t_all **all);
-void	*monitor_routine(void *arg);
-
-void	*monitor_routine(void *arg)
-{
-	t_all *all = (t_all *)arg;
-	int i;
-	
-	while (all->there_is_dead == 0)
-	{
-		i = 0;
-		while (i < all->args.nb_philo && all->there_is_dead == 0)
-		{
-			if (!no_dead(&all->philo[i]))
-			{
-				print_status(&all->philo[i], "died");
-				break;
-			}
-			i++;
-		}
-		usleep(1000); // Vérifier toutes les 1ms
-	}
-	return (NULL);
-}
-
-long time_diff_ms(struct timeval *start, struct timeval *end)************************************************ */
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   philo.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/17 01:49:13 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/21 22:28:06 by vafavard         ###   ########.fr       */
+/*   Created: 2025/08/21 23:11:50 by vafavard          #+#    #+#             */
+/*   Updated: 2025/08/21 23:12:16 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #include "philo.h"
 
@@ -58,6 +34,30 @@ void	*monitor_routine(void *arg);
 //     long microseconds = end->tv_usec - start->tv_usec;
 	
 //     return (seconds * 1000) + ((microseconds + 500) / 1000);
+// }
+
+// void	*monitor_routine(void *arg);
+
+// void	*monitor_routine(void *arg)
+// {
+// 	t_all *all = (t_all *)arg;
+// 	int i;
+	
+// 	while (all->there_is_dead == 0)
+// 	{
+// 		i = 0;
+// 		while (i < all->args.nb_philo && all->there_is_dead == 0)
+// 		{
+// 			if (!no_dead(&all->philo[i]))
+// 			{
+// 				print_status(&all->philo[i], "died");
+// 				break;
+// 			}
+// 			i++;
+// 		}
+// 		usleep(1000); // Vérifier toutes les 1ms
+// 	}
+// 	return (NULL);
 // }
 
 long time_diff_ms(struct timeval *start, struct timeval *end)
