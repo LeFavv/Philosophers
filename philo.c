@@ -1,4 +1,29 @@
-/* ************************************************************************** */
+/* ***********************void	can_eat_same_time(t_all **all);
+void	*monitor_routine(void *arg);
+
+void	*monitor_routine(void *arg)
+{
+	t_all *all = (t_all *)arg;
+	int i;
+	
+	while (all->there_is_dead == 0)
+	{
+		i = 0;
+		while (i < all->args.nb_philo && all->there_is_dead == 0)
+		{
+			if (!no_dead(&all->philo[i]))
+			{
+				print_status(&all->philo[i], "died");
+				break;
+			}
+			i++;
+		}
+		usleep(1000); // Vérifier toutes les 1ms
+	}
+	return (NULL);
+}
+
+long time_diff_ms(struct timeval *start, struct timeval *end)************************************************ */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   philo.c                                            :+:      :+:    :+:   */
@@ -6,7 +31,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 01:49:13 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/20 11:43:54 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/21 22:28:06 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,13 +50,21 @@ int		join_threads(t_all *all);
 int		create_threads(t_all *all);
 void	put_forks(t_philo *philo);
 void	can_eat_same_time(t_all **all);
+void	*monitor_routine(void *arg);
 
-long time_diff_ms(struct timeval *start, struct timeval *end) 
+// long time_diff_ms(struct timeval *start, struct timeval *end) 
+// {
+//     long seconds = end->tv_sec - start->tv_sec;
+//     long microseconds = end->tv_usec - start->tv_usec;
+	
+//     return (seconds * 1000) + ((microseconds + 500) / 1000);
+// }
+
+long time_diff_ms(struct timeval *start, struct timeval *end)
 {
     long seconds = end->tv_sec - start->tv_sec;
     long microseconds = end->tv_usec - start->tv_usec;
-	
-    return (seconds * 1000) + ((microseconds + 500) / 1000);
+    return (seconds * 1000) + (microseconds / 1000);
 }
 
 int	mutex_destroy(t_all *all)
@@ -82,8 +115,8 @@ int	init_philosophers(t_all *all)
 void	eat(t_philo *philo)
 {
     philo->meals_eaten += 1;
+	gettimeofday(&philo->last_meal, NULL); // Mettre à jour AVANT de manger
     usleep(philo->all->args.time_to_eat * 1000);
-	gettimeofday(&philo->last_meal, NULL);
 	// printf("Philo %d finished eating at %ld\n", philo->id, philo->last_meal.tv_usec);
 }
 
@@ -141,18 +174,17 @@ void *philosopher_routine(void *arg)
 		philo_routine_argc_6(arg);
 		return (NULL);
 	}
-	// if (philo->all->args.nb_philo == 1)
-	// {
-	// 	print_status(&philo, "is thinking");
-	// 	usleep(philo->all->args.time_to_sleep * 1000);
-	// 	if (!no_dead(&philo))
-    //     {
-    //         print_status(&philo, "died");
-    //        	return (NULL);
-    //     }
-		
-	// }
-    while (1)  // Boucle infinie, on sort quand mort
+	if (philo->all->args.nb_philo == 1)
+	{
+		print_status(&philo, "is thinking");
+		usleep(philo->all->args.time_to_sleep * 1000);
+		if (!no_dead(&philo))
+        {
+            print_status(&philo, "died");
+           	return (NULL);
+        }
+	}
+    while (philo->all->there_is_dead == 0)  // Arrêter quand quelqu'un est mort
     {
         print_status(&philo, "is thinking 💻");
         take_forks(philo);
@@ -161,13 +193,6 @@ void *philosopher_routine(void *arg)
         put_forks(philo);
         print_status(&philo, "\e[34mis sleeping\033[00m 💤");
         usleep(philo->all->args.time_to_sleep * 1000);
-        
-        // Vérifier la mort APRÈS avoir dormi (quand on a vraiment faim)
-        if (!no_dead(&philo))
-        {
-            print_status(&philo, "died");
-            break ;
-        }
     }
     return (NULL);
 }
@@ -201,21 +226,25 @@ void	print_status(t_philo **philo, char *str)
 
 void take_forks(t_philo *philo)
 {
-	// if (philo->all->args.nb_philo == 1)
-	// 	return ;
-    if (philo->left_fork < philo->right_fork)
+    // Pour éviter les deadlocks avec un nombre impair de philosophes :
+    // Le dernier philosophe prend ses fourchettes dans l'ordre inverse
+    if (philo->id == philo->all->args.nb_philo)
     {
-        pthread_mutex_lock(&philo->all->forks[philo->left_fork]);
-		print_status(&philo, "\e[33mhas taken a fork\033[00m");
+        // Dernier philosophe : prend d'abord la fourchette de droite, puis celle de gauche
         pthread_mutex_lock(&philo->all->forks[philo->right_fork]);
-        print_status(&philo, "\e[33mhas taken a fork\033[00m");
+        print_status(&philo, "\e[33mhas taken a fork\033[00m🍴");
+		gettimeofday(&philo->last_meal, NULL);
+        pthread_mutex_lock(&philo->all->forks[philo->left_fork]);
+        print_status(&philo, "\e[33mhas taken a fork\033[00m 🍴");
     }
     else
     {
-        pthread_mutex_lock(&philo->all->forks[philo->right_fork]);
-        print_status(&philo, "\e[33mhas taken a fork\033[00m");
+        // Autres philosophes : prennent d'abord la fourchette de gauche, puis celle de droite
         pthread_mutex_lock(&philo->all->forks[philo->left_fork]);
-        print_status(&philo, "\e[33mhas taken a fork\033[00m");
+        print_status(&philo, "\e[33mhas taken a fork\033[00m 🍴");
+		gettimeofday(&philo->last_meal, NULL);
+        pthread_mutex_lock(&philo->all->forks[philo->right_fork]);
+        print_status(&philo, "\e[33mhas taken a fork\033[00m🍴");
     }
 }
 
@@ -259,6 +288,29 @@ void	can_eat_same_time(t_all **all)
 		(*all)->eat_same_time = ((*all)->args.nb_philo - 1)/ 2;
 }
 
+void	*monitor_routine(void *arg)
+{
+	t_all *all = (t_all *)arg;
+	int i;
+	t_philo *current_philo;
+	
+	while (all->there_is_dead == 0)
+	{
+		i = 0;
+		while (i < all->args.nb_philo && all->there_is_dead == 0)
+		{
+			current_philo = &all->philo[i];
+			if (!no_dead(&current_philo))
+			{
+				print_status(&current_philo, "died");
+				break;
+			}
+			i++;
+		}
+		usleep(1000); // Vérifier toutes les 1ms
+	}
+	return (NULL);
+}
 
 
 int main(int argc, char **argv)
@@ -267,6 +319,7 @@ int main(int argc, char **argv)
 	t_all	*all;
 	long	*tab;
 	int		i = 0;
+	long	 time;
 
 	if (argc == 5 || argc == 6)
 	{
@@ -291,21 +344,41 @@ int main(int argc, char **argv)
 		if (!init_struct_5(args, tab, argc - 1))
 			return (free(tab), free(args), free(all), 1);
 		all->args = *args;
-		free(args);
+		// free(args);
 		free(tab);
 		if (!init_philosophers(all))
     		return (free(all), 1);
+		if (all->args.nb_philo == 1)
+		{
+			gettimeofday(&all->start, NULL);
+			printf("0 1 is thinking 💻\n");
+			// printf("%ld\n", all->args.time_to_die);
+			// printf("%d\n", all->start.tv_usec);
+    		usleep(all->args.time_to_die * 1000);
+			gettimeofday(&all->end, NULL);
+			time = time_diff_ms(&all->start, &all->end);
+			// printf("time = %ld\n", time);
+			printf("%s%ld 1 died%s\n", RED, time, END_COLOR);
+			free(all);
+			free(args);
+    		return (0);
+		}
 		// printf("nb_philo = %ld\n", all->args.nb_philo);
 		// printf("time_to_die = %ld\n", all->args.time_to_die);
 		// printf("time_to_eat = %ld\n", all->args.time_to_eat);
 		// printf("time_to_sleep = %ld\n", all->args.time_to_sleep);
 		// printf("number_of_times_each_philosopher_must_eat = %ld\n", all->args.number_of_times_each_philosopher_must_eat);
+		
+		pthread_t monitor_thread;
 		create_threads(all);
+		pthread_create(&monitor_thread, NULL, monitor_routine, all);
 		join_threads(all);
+		pthread_join(monitor_thread, NULL);
 		mutex_destroy(all);
 		free(all->philo);
 		free(all->forks);
 		free(all);
+		free(args);
 	}
 	return (0);
 }
