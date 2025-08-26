@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/21 23:11:50 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/26 15:10:39 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/26 15:31:52 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,27 @@ int	mutex_destroy(t_all *all)
 	return (1);
 }
 
+
+long	get_time_ms(void)
+{
+	struct timeval	tv;
+
+	if (gettimeofday(&tv, NULL) == -1)
+		return (-1);
+	return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
+}
+
+void smart_sleep(long time_in_ms, t_all **all)
+{
+    long start_time = get_time_ms();
+    while (get_time_ms() - start_time < time_in_ms)
+    {
+        if ((*all)->there_is_dead)
+            break;
+        usleep(1000); // dormir 1 ms
+    }
+}
+
 int	init_philosophers(t_all *all)
 {
 	int	i;
@@ -89,8 +110,8 @@ void	eat(t_philo *philo)
 {
     philo->meals_eaten += 1;
 	gettimeofday(&philo->last_meal, NULL); // Mettre à jour AVANT de manger
-    usleep(philo->all->args.time_to_eat * 1000);
-	// smart_sleep(philo->all->args.time_to_eat);
+    // usleep(philo->all->args.time_to_eat * 1000);
+	smart_sleep(philo->all->args.time_to_eat, &philo->all);
 	// printf("Philo %d finished eating at %ld\n", philo->id, philo->last_meal.tv_usec);
 }
 
@@ -176,7 +197,7 @@ void *philosopher_routine(void *arg)
         // print_status(&philo, "\e[34mis sleeping\033[00m 💤");
 		print_status(&philo, "\e[34mis sleeping\033[00m");
         usleep(philo->all->args.time_to_sleep * 1000);
-		// smart_sleep(philo->all->args.time_to_sleep);
+		smart_sleep(philo->all->args.time_to_sleep, &philo->all);
     }
     return (NULL);
 }
@@ -231,29 +252,6 @@ void take_forks(t_philo *philo)
         print_status(&philo, "\e[33mhas taken a fork\033[00m 🍴");
     }
 }
-// void take_forks_odds(t_philo *philo)
-// {
-//     // Pour éviter les deadlocks : 
-//     // Les philosophes avec un ID pair prennent d'abord la fourchette de gauche
-//     // Les philosophes avec un ID impair prennent d'abord la fourchette de droite
-//     // if (philo->id % 2 == 0)
-//     // {
-//     //     // Philosophe pair : gauche puis droite
-//     //     pthread_mutex_lock(&philo->all->forks[philo->left_fork]);
-//     //     print_status(&philo, "\e[33mhas taken a fork\033[00m 🍴");
-//     //     pthread_mutex_lock(&philo->all->forks[philo->right_fork]);
-//     //     print_status(&philo, "\e[33mhas taken a fork\033[00m🍴");
-//     // }
-//     // else
-//     // {
-//         // Philosophe impair : droite puis gauche
-//         pthread_mutex_lock(&philo->all->forks[philo->left_fork]);
-//         print_status(&philo, "\e[33mhas taken a fork\033[00m🍴");
-//         pthread_mutex_lock(&philo->all->forks[philo->right_fork]);
-//         print_status(&philo, "\e[33mhas taken a fork\033[00m 🍴");
-//     // }
-// }
-
 
 int	join_threads(t_all *all)
 {
@@ -279,6 +277,17 @@ int	join_threads(t_all *all)
 //         i++;
 //     }
 //     return (1);
+// }
+
+// void smart_sleep(long time_in_ms, t_all *all)
+// {
+//     long start_time = get_time_ms();
+//     while (get_time_ms() - start_time < time_in_ms)
+//     {
+//         if (all->there_is_dead)
+//             break;
+//         usleep(1000); // dormir 1 ms
+//     }
 // }
 
 int create_threads_odds(t_all *all)
@@ -346,7 +355,7 @@ void	*monitor_routine(void *arg)
 			}
 			i++;
 		}
-		usleep(500); // Vérifier toutes les 1ms
+		usleep(1000); // Vérifier toutes les 1ms
 	}
 	return (NULL);
 }
