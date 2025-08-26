@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/21 23:11:50 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/26 13:42:04 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/26 15:10:39 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ void	*monitor_routine(void *arg);
 // void	take_forks_odds(t_philo *philo);
 // void	take_forks_pairs(t_philo *philo);
 void put_forks_odds(t_philo *philo);
+
 
 
 long time_diff_ms(struct timeval *start, struct timeval *end)
@@ -89,6 +90,7 @@ void	eat(t_philo *philo)
     philo->meals_eaten += 1;
 	gettimeofday(&philo->last_meal, NULL); // Mettre à jour AVANT de manger
     usleep(philo->all->args.time_to_eat * 1000);
+	// smart_sleep(philo->all->args.time_to_eat);
 	// printf("Philo %d finished eating at %ld\n", philo->id, philo->last_meal.tv_usec);
 }
 
@@ -136,27 +138,27 @@ void *philo_routine_argc_6(void *arg)
 	return (NULL);
 }
 
-
 void *philosopher_routine(void *arg)
 {
     t_philo *philo = (t_philo *)arg;
     
 	if (philo->all->args.number_of_times_each_philosopher_must_eat != -1)
 	{	
+				printf("%ld\n", philo->all->args.nb_philo);
+
 		philo_routine_argc_6(arg);
 		return (NULL);
-	}
+	}		
+
 	if (philo->all->args.nb_philo == 1)
 	{
-		print_status(&philo, "is thinking");
-		usleep(philo->all->args.time_to_sleep * 1000);
-		if (!no_dead(&philo))
-        {
-            print_status(&philo, "died");
-           	return (NULL);
-        }
+		print_status(&philo, "has taken a fork");
+		usleep(philo->all->args.time_to_die * 1000);
+		print_status(&philo, "died");
+		philo->all->there_is_dead = 1;
+		return (NULL);
 	}
-    while (philo->all->there_is_dead == 0)  // Arrêter quand quelqu'un est mort
+    while (philo->all->there_is_dead == 0 && philo->all->args.nb_philo > 1)  // Arrêter quand quelqu'un est mort
     {
         // print_status(&philo, "is thinking 💻");
 		print_status(&philo, "is thinking");
@@ -174,6 +176,7 @@ void *philosopher_routine(void *arg)
         // print_status(&philo, "\e[34mis sleeping\033[00m 💤");
 		print_status(&philo, "\e[34mis sleeping\033[00m");
         usleep(philo->all->args.time_to_sleep * 1000);
+		// smart_sleep(philo->all->args.time_to_sleep);
     }
     return (NULL);
 }
@@ -190,7 +193,7 @@ int	ft_strcmp(char *s1, char *s2)
 void	print_status(t_philo **philo, char *str)
 {
 	long time;
-	
+	pthread_mutex_lock(&(*philo)->all->print_mutex);
 	gettimeofday(&(*philo)->all->end, NULL);
 	time = time_diff_ms(&(*philo)->all->start, &(*philo)->all->end);
 	if ((*philo)->all->there_is_dead == 0)
@@ -203,6 +206,7 @@ void	print_status(t_philo **philo, char *str)
 		// printf("valeur de there_is_dead = %d\n", (*philo)->all->there_is_dead);
 		printf("%s%ld %d %s%s\n",RED, time, (*philo)->id, str, END_COLOR);
 	}
+	pthread_mutex_unlock(&(*philo)->all->print_mutex);
 }
 
 void take_forks(t_philo *philo)
@@ -354,7 +358,7 @@ int main(int argc, char **argv)
 	t_all	*all;
 	long	*tab;
 	int		i = 0;
-	long	 time;
+	// long	 time;
 
 	if (argc == 5 || argc == 6)
 	{
@@ -383,21 +387,21 @@ int main(int argc, char **argv)
 		free(tab);
 		if (!init_philosophers(all))
     		return (free(all), 1);
-		if (all->args.nb_philo == 1)
-		{
-			gettimeofday(&all->start, NULL);
-			printf("0 1 is thinking 💻\n");
-			// printf("%ld\n", all->args.time_to_die);
-			// printf("%d\n", all->start.tv_usec);
-    		usleep(all->args.time_to_die * 1000);
-			gettimeofday(&all->end, NULL);
-			time = time_diff_ms(&all->start, &all->end);
-			// printf("time = %ld\n", time);
-			printf("%s%ld 1 died%s\n", RED, time, END_COLOR);
-			free(all);
-			free(args);
-    		return (0);
-		}
+		// if (all->args.nb_philo == 1)
+		// {
+		// 	gettimeofday(&all->start, NULL);
+		// 	printf("0 1 is thinking 💻\n");
+		// 	// printf("%ld\n", all->args.time_to_die);
+		// 	// printf("%d\n", all->start.tv_usec);
+    	// 	usleep(all->args.time_to_die * 1000);
+		// 	gettimeofday(&all->end, NULL);
+		// 	time = time_diff_ms(&all->start, &all->end);
+		// 	// printf("time = %ld\n", time);
+		// 	printf("%s%ld 1 died%s\n", RED, time, END_COLOR);
+		// 	free(all);
+		// 	free(args);
+    	// 	return (0);
+		// }
 		// printf("nb_philo = %ld\n", all->args.nb_philo);
 		// printf("time_to_die = %ld\n", all->args.time_to_die);
 		// printf("time_to_eat = %ld\n", all->args.time_to_eat);
