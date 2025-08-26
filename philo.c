@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/21 23:11:50 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/21 23:12:16 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/26 13:42:04 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,38 +27,10 @@ int		create_threads(t_all *all);
 void	put_forks(t_philo *philo);
 void	can_eat_same_time(t_all **all);
 void	*monitor_routine(void *arg);
+// void	take_forks_odds(t_philo *philo);
+// void	take_forks_pairs(t_philo *philo);
+void put_forks_odds(t_philo *philo);
 
-// long time_diff_ms(struct timeval *start, struct timeval *end) 
-// {
-//     long seconds = end->tv_sec - start->tv_sec;
-//     long microseconds = end->tv_usec - start->tv_usec;
-	
-//     return (seconds * 1000) + ((microseconds + 500) / 1000);
-// }
-
-// void	*monitor_routine(void *arg);
-
-// void	*monitor_routine(void *arg)
-// {
-// 	t_all *all = (t_all *)arg;
-// 	int i;
-	
-// 	while (all->there_is_dead == 0)
-// 	{
-// 		i = 0;
-// 		while (i < all->args.nb_philo && all->there_is_dead == 0)
-// 		{
-// 			if (!no_dead(&all->philo[i]))
-// 			{
-// 				print_status(&all->philo[i], "died");
-// 				break;
-// 			}
-// 			i++;
-// 		}
-// 		usleep(1000); // Vérifier toutes les 1ms
-// 	}
-// 	return (NULL);
-// }
 
 long time_diff_ms(struct timeval *start, struct timeval *end)
 {
@@ -106,7 +78,7 @@ int	init_philosophers(t_all *all)
         all->philo[i].right_fork = (i + 1) % all->args.nb_philo;
         all->philo[i].all = all;
        all->philo[i].meals_eaten = 0;
-		gettimeofday(&all->philo[i].last_meal, NULL); 
+		all->philo[i].last_meal = all->start; // Initialiser avec le temps de début
         i++;
     }
 	return (1);
@@ -161,7 +133,7 @@ void *philo_routine_argc_6(void *arg)
         print_status(&philo, "is sleeping");
         usleep(philo->all->args.time_to_sleep * 1000);
     }
-    return (NULL);
+	return (NULL);
 }
 
 
@@ -186,12 +158,21 @@ void *philosopher_routine(void *arg)
 	}
     while (philo->all->there_is_dead == 0)  // Arrêter quand quelqu'un est mort
     {
-        print_status(&philo, "is thinking 💻");
+        // print_status(&philo, "is thinking 💻");
+		print_status(&philo, "is thinking");
+		if (philo->all->args.nb_philo % 2 != 0)
+			usleep(1000);
         take_forks(philo);
-        print_status(&philo, "\e[32mis eating\033[00m 🍔");
+        // print_status(&philo, "\e[32mis eating\033[00m 🍔");
+		print_status(&philo, "\e[32mis eating\033[00m");
         eat(philo);
-        put_forks(philo);
-        print_status(&philo, "\e[34mis sleeping\033[00m 💤");
+		if (philo->all->args.nb_philo % 2 == 0)
+			put_forks(philo);
+		else
+			put_forks_odds(philo);
+        // put_forks(philo);
+        // print_status(&philo, "\e[34mis sleeping\033[00m 💤");
+		print_status(&philo, "\e[34mis sleeping\033[00m");
         usleep(philo->all->args.time_to_sleep * 1000);
     }
     return (NULL);
@@ -226,27 +207,49 @@ void	print_status(t_philo **philo, char *str)
 
 void take_forks(t_philo *philo)
 {
-    // Pour éviter les deadlocks avec un nombre impair de philosophes :
-    // Le dernier philosophe prend ses fourchettes dans l'ordre inverse
-    if (philo->id == philo->all->args.nb_philo)
+    // Pour éviter les deadlocks : 
+    // Les philosophes avec un ID pair prennent d'abord la fourchette de gauche
+    // Les philosophes avec un ID impair prennent d'abord la fourchette de droite
+    if (philo->id % 2 == 0)
     {
-        // Dernier philosophe : prend d'abord la fourchette de droite, puis celle de gauche
-        pthread_mutex_lock(&philo->all->forks[philo->right_fork]);
-        print_status(&philo, "\e[33mhas taken a fork\033[00m🍴");
-		gettimeofday(&philo->last_meal, NULL);
+        // Philosophe pair : gauche puis droite
         pthread_mutex_lock(&philo->all->forks[philo->left_fork]);
         print_status(&philo, "\e[33mhas taken a fork\033[00m 🍴");
+        pthread_mutex_lock(&philo->all->forks[philo->right_fork]);
+        print_status(&philo, "\e[33mhas taken a fork\033[00m🍴");
     }
     else
     {
-        // Autres philosophes : prennent d'abord la fourchette de gauche, puis celle de droite
-        pthread_mutex_lock(&philo->all->forks[philo->left_fork]);
-        print_status(&philo, "\e[33mhas taken a fork\033[00m 🍴");
-		gettimeofday(&philo->last_meal, NULL);
+        // Philosophe impair : droite puis gauche
         pthread_mutex_lock(&philo->all->forks[philo->right_fork]);
         print_status(&philo, "\e[33mhas taken a fork\033[00m🍴");
+        pthread_mutex_lock(&philo->all->forks[philo->left_fork]);
+        print_status(&philo, "\e[33mhas taken a fork\033[00m 🍴");
     }
 }
+// void take_forks_odds(t_philo *philo)
+// {
+//     // Pour éviter les deadlocks : 
+//     // Les philosophes avec un ID pair prennent d'abord la fourchette de gauche
+//     // Les philosophes avec un ID impair prennent d'abord la fourchette de droite
+//     // if (philo->id % 2 == 0)
+//     // {
+//     //     // Philosophe pair : gauche puis droite
+//     //     pthread_mutex_lock(&philo->all->forks[philo->left_fork]);
+//     //     print_status(&philo, "\e[33mhas taken a fork\033[00m 🍴");
+//     //     pthread_mutex_lock(&philo->all->forks[philo->right_fork]);
+//     //     print_status(&philo, "\e[33mhas taken a fork\033[00m🍴");
+//     // }
+//     // else
+//     // {
+//         // Philosophe impair : droite puis gauche
+//         pthread_mutex_lock(&philo->all->forks[philo->left_fork]);
+//         print_status(&philo, "\e[33mhas taken a fork\033[00m🍴");
+//         pthread_mutex_lock(&philo->all->forks[philo->right_fork]);
+//         print_status(&philo, "\e[33mhas taken a fork\033[00m 🍴");
+//     // }
+// }
+
 
 int	join_threads(t_all *all)
 {
@@ -261,11 +264,37 @@ int	join_threads(t_all *all)
     return (1);
 }
 
-int create_threads(t_all *all)
+// int create_threads(t_all *all)
+// {
+//     int i = 0;
+    
+//     while (i < all->args.nb_philo)
+//     {
+//         if (pthread_create(&all->philo[i].thread, NULL, philosopher_routine, &all->philo[i]) != 0)
+//             return (0);
+//         i++;
+//     }
+//     return (1);
+// }
+
+int create_threads_odds(t_all *all)
 {
     int i = 0;
     
-    while (i < all->args.nb_philo)
+    while (i < all->args.nb_philo && all->args.nb_philo % 2 != 0)
+    {
+        if (pthread_create(&all->philo[i].thread, NULL, philosopher_routine, &all->philo[i]) != 0)
+            return (0);
+        i++;
+    }
+    return (1);
+}
+
+int create_threads_pairs(t_all *all)
+{
+    int i = 0;
+    
+    while (i < all->args.nb_philo && all->args.nb_philo % 2 == 0)
     {
         if (pthread_create(&all->philo[i].thread, NULL, philosopher_routine, &all->philo[i]) != 0)
             return (0);
@@ -278,6 +307,12 @@ void put_forks(t_philo *philo)
 {
     pthread_mutex_unlock(&philo->all->forks[philo->left_fork]);
     pthread_mutex_unlock(&philo->all->forks[philo->right_fork]);
+}
+
+void put_forks_odds(t_philo *philo)
+{
+    pthread_mutex_unlock(&philo->all->forks[philo->right_fork]);
+    pthread_mutex_unlock(&philo->all->forks[philo->left_fork]);
 }
 
 void	can_eat_same_time(t_all **all)
@@ -307,7 +342,7 @@ void	*monitor_routine(void *arg)
 			}
 			i++;
 		}
-		usleep(1000); // Vérifier toutes les 1ms
+		usleep(500); // Vérifier toutes les 1ms
 	}
 	return (NULL);
 }
@@ -370,7 +405,9 @@ int main(int argc, char **argv)
 		// printf("number_of_times_each_philosopher_must_eat = %ld\n", all->args.number_of_times_each_philosopher_must_eat);
 		
 		pthread_t monitor_thread;
-		create_threads(all);
+		// create_threads(all);
+		create_threads_odds(all);
+		create_threads_pairs(all);
 		pthread_create(&monitor_thread, NULL, monitor_routine, all);
 		join_threads(all);
 		pthread_join(monitor_thread, NULL);
