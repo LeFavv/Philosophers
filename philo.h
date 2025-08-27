@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 01:44:03 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/26 14:04:54 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/27 13:25:59 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ typedef struct s_all
 	int				nb_round_eat; //si == number_of_times_each_philosopher_must_eat ==> stop la simulation
 	pthread_mutex_t			*forks; // Dans init malloc * nb_philo
 	pthread_mutex_t			print_mutex;
+	pthread_mutex_t			death_mutex;
 	t_philo			*philo;
 }	t_all;
 
@@ -69,6 +70,7 @@ typedef struct s_philo
 	t_all *all;
 	int	meals_eaten;
 	struct timeval last_meal;
+	pthread_mutex_t			meal_mutex;
 }	t_philo;
 
 typedef struct s_status
