@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 01:44:03 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/27 13:56:30 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/27 14:40:55 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ typedef struct s_philo
 
 typedef struct s_status
 {
-	int	nb_philo;
+	int	nb_philo; 
 	int status;
 }	t_status;
 

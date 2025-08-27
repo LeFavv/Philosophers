@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/21 23:11:50 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/27 13:58:25 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/27 14:48:50 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,24 +46,21 @@ long time_diff_ms(struct timeval *start, struct timeval *end)
 int	mutex_destroy(t_all *all)
 {
 	int i = 0;
-	
+
 	while (i < all->args.nb_philo)
 	{
 		if (pthread_mutex_destroy(&all->forks[i]) != 0)
 			return (0);
-		
+		if (pthread_mutex_destroy(&all->philo[i].meal_mutex) != 0)
+			return (0);
 		i++;
 	}
-	if (pthread_mutex_destroy(&all->death_mutex))
+	if (pthread_mutex_destroy(&all->death_mutex) != 0)
 		return (0);
-	if (pthread_mutex_destroy(&all->print_mutex))
-		return (0);
-	if (pthread_mutex_destroy(&all->philo->meal_mutex))
+	if (pthread_mutex_destroy(&all->print_mutex) != 0)
 		return (0);
 	return (1);
 }
-
-
 long	get_time_ms(void)
 {
 	struct timeval	tv;
@@ -76,9 +73,14 @@ long	get_time_ms(void)
 void smart_sleep(long time_in_ms, t_all **all)
 {
     long start_time = get_time_ms();
+
     while (get_time_ms() - start_time < time_in_ms)
     {
-        if ((*all)->there_is_dead)
+        pthread_mutex_lock(&(*all)->death_mutex);
+        int dead = (*all)->there_is_dead;
+        pthread_mutex_unlock(&(*all)->death_mutex);
+
+        if (dead)
             break;
         usleep(200);
     }
@@ -88,44 +90,46 @@ int	init_philosophers(t_all *all)
 {
 	int	i;
 
-	i = 0;
 	all->philo = malloc(sizeof(t_philo) * all->args.nb_philo);
 	if (!all->philo)
 		return (0);
+
 	all->forks = malloc(sizeof(pthread_mutex_t) * all->args.nb_philo);
 	if (!all->forks)
+		return (free(all->philo), 0);
+
+	// Mutex globaux
+	if (pthread_mutex_init(&all->death_mutex, NULL))
 		return (0);
+	if (pthread_mutex_init(&all->print_mutex, NULL))
+		return (0);
+
+	// Mutex par philosophe et initialisation
+	i = 0;
 	while (i < all->args.nb_philo)
 	{
 		if (pthread_mutex_init(&all->forks[i], NULL) != 0)
 			return (0);
-		if (pthread_mutex_init(&all->death_mutex, NULL))
+		if (pthread_mutex_init(&all->philo[i].meal_mutex, NULL) != 0)
 			return (0);
-		if (pthread_mutex_init(&all->print_mutex, NULL))
-			return (0);
-		if (pthread_mutex_init(&all->philo->meal_mutex, NULL))
-			return (0);
+
+		all->philo[i].id = i + 1;
+		all->philo[i].left_fork = i;
+		all->philo[i].right_fork = (i + 1) % all->args.nb_philo;
+		all->philo[i].all = all;
+		all->philo[i].meals_eaten = 0;
+		gettimeofday(&all->philo[i].last_meal, NULL);
+
 		i++;
 	}
-	i = 0;
 	all->there_is_dead = 0;
-	 while (i < all->args.nb_philo)
-    {
-        all->philo[i].id = i + 1;
-        all->philo[i].left_fork = i;
-        all->philo[i].right_fork = (i + 1) % all->args.nb_philo;
-        all->philo[i].all = all;
-       all->philo[i].meals_eaten = 0;
-		// all->philo[i].last_meal = all->start; // Initialiser avec le temps de début
-        i++;
-    }
 	return (1);
 }
-
 void	eat(t_philo *philo)
 {
-    philo->meals_eaten += 1;
+    // philo->meals_eaten += 1;
 	pthread_mutex_lock(&philo->meal_mutex);
+	philo->meals_eaten += 1;
 	gettimeofday(&philo->last_meal, NULL); // Mettre à jour AVANT de manger
 	pthread_mutex_unlock(&philo->meal_mutex);
 	// usleep(philo->all->args.time_to_eat * 1000);
@@ -189,8 +193,10 @@ void *philosopher_routine(void *arg)
 
 		philo_routine_argc_6(arg);
 		return (NULL);
-	}		
+	}
+	pthread_mutex_lock(&philo->meal_mutex);
 	gettimeofday(&philo->last_meal, NULL);
+	pthread_mutex_unlock(&philo->meal_mutex);
 	if (philo->all->args.nb_philo == 1)
 	{
 		print_status(&philo, "has taken a fork");
@@ -199,8 +205,14 @@ void *philosopher_routine(void *arg)
 		philo->all->there_is_dead = 1;
 		return (NULL);
 	}
-    while (philo->all->there_is_dead == 0 && philo->all->args.nb_philo > 1)  // Arrêter quand quelqu'un est mort
+    while (1)  // Arrêter quand quelqu'un est mort
     {
+		    pthread_mutex_lock(&philo->all->death_mutex);
+ 			int dead = philo->all->there_is_dead;
+    		pthread_mutex_unlock(&philo->all->death_mutex);
+
+    if (dead || philo->all->args.nb_philo <= 1)
+        break;
         // print_status(&philo, "is thinking 💻");
 		print_status(&philo, "is thinking");
 		// if (philo->all->args.nb_philo % 2 != 0)
@@ -308,7 +320,7 @@ void put_forks_odds(t_philo *philo)
     pthread_mutex_unlock(&philo->all->forks[philo->left_fork]);
 }
 
-void *monitor_routine(void *arg)
+void *	monitor_routine(void *arg)
 {
     t_all *all = (t_all *)arg;
     int i;
