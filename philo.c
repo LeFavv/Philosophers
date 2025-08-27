@@ -6,12 +6,17 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/21 23:11:50 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/27 13:54:16 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/27 13:58:25 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #include "philo.h"
+
+// implementer les rounds pour savoir qui a eat
+// checks parsing dans le main avec messages adequats
+// totu mettre dans dosseir philo
+// gerer le cas de sleep pour quitter si quelqu'un dort mais que le programme est terminado
 
 long	time_diff_ms(struct timeval *start, struct timeval *end);
 int		mutex_destroy(t_all *all);

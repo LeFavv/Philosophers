@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 01:44:03 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/27 13:25:59 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/27 13:56:30 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,21 +79,25 @@ typedef struct s_status
 	int status;
 }	t_status;
 
-
-int		init_struct_5(t_args *args, long *tab, int nb);
-long	ft_atol(char *str);
 long	time_diff_ms(struct timeval *start, struct timeval *end);
-void	sleep_routine(t_all **all);
-void	*eat_routine(t_all **all);
 int		mutex_destroy(t_all *all);
+long	get_time_ms(void);
+void	smart_sleep(long time_in_ms, t_all **all);
 int		init_philosophers(t_all *all);
-int		init_philosophers(t_all *all);
+void	eat(t_philo *philo);
+int		no_dead(t_philo **philo);
+void	*philo_routine_argc_6(void *arg);
 void	*philosopher_routine(void *arg);
+int		ft_strcmp(char *s1, char *s2);
 void	print_status(t_philo **philo, char *str);
 void	take_forks(t_philo *philo);
 int		join_threads(t_all *all);
 int		create_threads(t_all *all);
 void	put_forks(t_philo *philo);
-void	can_eat_same_time(t_all **all);
+void	put_forks_odds(t_philo *philo);
+void	*monitor_routine(void *arg);
+long	ft_atol(char *str);
+int		init_struct_5(t_args *args, long *tab, int nb);
+
 
 #endif
