@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/21 23:11:50 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/28 09:19:14 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/28 14:31:54 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,14 +134,38 @@ int	init_philosophers(t_all *all)
 
 		i++;
 	}
+	//new part de la
+	if (all->args.number_of_times_each_philosopher_must_eat != -1)
+	{
+		all->ate = malloc(sizeof(int *) * all->args.number_of_times_each_philosopher_must_eat);
+		if (!all->ate)
+			return (0);
+		i = 0;
+		while (i < all->args.nb_philo)
+		{
+			all->ate[i] = malloc(sizeof(int) * (int)all->args.nb_philo);
+			if (!all->ate[i])
+				return (0);
+			i++;
+		}
+	}
+	//a la
 	all->there_is_dead = 0;
 	return (1);
 }
+
 void	eat(t_philo *philo)
 {
     // philo->meals_eaten += 1;
 	pthread_mutex_lock(&philo->meal_mutex);
 	philo->meals_eaten += 1;
+	philo->all->ate[philo->all->nb_round_eat][philo->id] = ATE;
+	// if (all_ate(philo))
+	// {
+	// 	init_ate(&philo->all);
+	// 	philo->all->nb_round_eat += 1;
+	// 	//thread pour regarder en temps reel si condition remplie
+	// }
 	gettimeofday(&philo->last_meal, NULL); // Mettre à jour AVANT de manger
 	pthread_mutex_unlock(&philo->meal_mutex);
 	// usleep(philo->all->args.time_to_eat * 1000);
@@ -480,6 +504,7 @@ int main(int argc, char **argv)
 		mutex_destroy(all);
 		free(all->philo);
 		free(all->forks);
+		free(all->ate);
 		free(all);
 		free(args);
 	}

@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 01:44:03 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/28 09:18:29 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/28 14:30:47 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ typedef struct s_all
 	int				eat_same_time;
 	int				eating;
 		// int				nb_ate; //nombre de philos qui ont mange ce tour si (revient a zero une fois qu'ils ont tous mange)
-	int				*ate;
+	int				**ate;
 	int				nb_ate; //nombre de philos qui ont mange ce tour si (revient a zero une fois qu'ils ont tous mange)
 	int				nb_round_eat; //si == number_of_times_each_philosopher_must_eat ==> stop la simulation
 	pthread_mutex_t			*forks; // Dans init malloc * nb_philo
