@@ -6,11 +6,11 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 01:44:03 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/28 09:18:24 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/28 09:18:29 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# ifndef PHILO_H
+#ifndef PHILO_H
 # define PHILO_H
 
 # include <stdio.h>
@@ -30,7 +30,8 @@
 #define	BLUE "\e[34m"
 #define END_COLOR "\033[00m"
 
-
+#define ATE 1
+#define NEED_TO_EAT 0
 
 typedef struct s_philo t_philo;
 typedef struct s_all t_all;
@@ -44,8 +45,6 @@ typedef struct s_args
 	long	number_of_times_each_philosopher_must_eat;
 }	t_args;
 
-//avoir un tableau et remplir la case correspondante a l'id (-1 ?) des philos
-//init le tableau avec des 0 au debut et si quelqu'un mange rempalcer la case par un 1 
 
 typedef struct s_all
 {
@@ -57,7 +56,9 @@ typedef struct s_all
 	pthread_t		*threads; //tableau de thread ?
 	int				eat_same_time;
 	int				eating;
-
+		// int				nb_ate; //nombre de philos qui ont mange ce tour si (revient a zero une fois qu'ils ont tous mange)
+	int				*ate;
+	int				nb_ate; //nombre de philos qui ont mange ce tour si (revient a zero une fois qu'ils ont tous mange)
 	int				nb_round_eat; //si == number_of_times_each_philosopher_must_eat ==> stop la simulation
 	pthread_mutex_t			*forks; // Dans init malloc * nb_philo
 	pthread_mutex_t			print_mutex;
@@ -73,7 +74,7 @@ typedef struct s_philo
 	pthread_t thread;
 	t_all *all;
 	int	meals_eaten;
-	struct timeval			last_meal;
+	struct timeval last_meal;
 	pthread_mutex_t			meal_mutex;
 }	t_philo;
 
