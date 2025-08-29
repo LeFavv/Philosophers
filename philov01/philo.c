@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/21 23:11:50 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/28 14:31:54 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/29 11:07:07 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,9 @@ int		mutex_destroy(t_all *all);
 long	get_time_ms(void);
 void	smart_sleep(long time_in_ms, t_all **all);
 int		init_philosophers(t_all *all);
-void	eat(t_philo *philo);
+int		eat(t_philo *philo);
 int		no_dead(t_philo **philo);
-void	*philo_routine_argc_6(void *arg);
+void	*philosopher_routine_argc_6(void *arg);
 void	*philosopher_routine(void *arg);
 int		ft_strcmp(char *s1, char *s2);
 void	print_status(t_philo **philo, char *str);
@@ -36,6 +36,7 @@ void	put_forks(t_philo *philo);
 void	put_forks_odds(t_philo *philo);
 void	*monitor_routine(void *arg);
 void	init_ate(t_all **all);
+int		all_ate(t_philo *philo);
 
 void	init_ate(t_all **all) // je dois le malloc a la bonne taille aussi
 {
@@ -71,9 +72,11 @@ int	mutex_destroy(t_all *all)
 		return (0);
 	if (pthread_mutex_destroy(&all->print_mutex) != 0)
 		return (0);
+	if (pthread_mutex_destroy(&all->eating_mutex) != 0)
+		return (0);
 	return (1);
 }
-long	get_time_ms(void)
+  long	get_time_ms(void)
 {
 	struct timeval	tv;
 
@@ -115,6 +118,8 @@ int	init_philosophers(t_all *all)
 		return (0);
 	if (pthread_mutex_init(&all->print_mutex, NULL))
 		return (0);
+	if (pthread_mutex_init(&all->eating_mutex, NULL))
+		return (0);
 
 	// Mutex par philosophe et initialisation
 	i = 0;
@@ -131,46 +136,89 @@ int	init_philosophers(t_all *all)
 		all->philo[i].all = all;
 		all->philo[i].meals_eaten = 0;
 		gettimeofday(&all->philo[i].last_meal, NULL);
-
 		i++;
 	}
 	//new part de la
 	if (all->args.number_of_times_each_philosopher_must_eat != -1)
 	{
-		all->ate = malloc(sizeof(int *) * all->args.number_of_times_each_philosopher_must_eat);
+		all->ate = malloc(sizeof(int) * all->args.number_of_times_each_philosopher_must_eat);
 		if (!all->ate)
 			return (0);
-		i = 0;
-		while (i < all->args.nb_philo)
-		{
-			all->ate[i] = malloc(sizeof(int) * (int)all->args.nb_philo);
-			if (!all->ate[i])
-				return (0);
-			i++;
-		}
+		init_ate(&all);
+		// i = 0;
+		// while (i < all->args.nb_philo)
+		// {
+		// 	all->ate[i] = malloc(sizeof(int) * (int)all->args.nb_philo);
+		// 	if (!all->ate[i])
+		// 		return (0);
+		// 	i++;
+		// }
 	}
 	//a la
 	all->there_is_dead = 0;
 	return (1);
 }
 
-void	eat(t_philo *philo)
+int	all_ate(t_philo *philo)
 {
-    // philo->meals_eaten += 1;
-	pthread_mutex_lock(&philo->meal_mutex);
-	philo->meals_eaten += 1;
-	philo->all->ate[philo->all->nb_round_eat][philo->id] = ATE;
-	// if (all_ate(philo))
-	// {
-	// 	init_ate(&philo->all);
-	// 	philo->all->nb_round_eat += 1;
-	// 	//thread pour regarder en temps reel si condition remplie
-	// }
-	gettimeofday(&philo->last_meal, NULL); // Mettre à jour AVANT de manger
-	pthread_mutex_unlock(&philo->meal_mutex);
-	// usleep(philo->all->args.time_to_eat * 1000);
-	smart_sleep(philo->all->args.time_to_eat, &philo->all);
-	// printf("Philo %d finished eating at %ld\n", philo->id, philo->last_meal.tv_usec);
+	int i = 0;
+
+	while (i < philo->all->args.nb_philo)
+	{
+		if (philo->all->ate[i] == NEED_TO_EAT)
+			return (0);
+		i++;
+	}
+	philo->all->nb_round_eat += 1;
+	if (philo->all->nb_round_eat == philo->all->args.number_of_times_each_philosopher_must_eat)
+		exit (0);
+	printf("J'arrive la\n");
+	init_ate(&philo->all);
+	return (1);
+}
+
+// int	eat(t_philo *philo)
+// {
+//     // philo->meals_eaten += 1;
+// 	pthread_mutex_lock(&philo->meal_mutex);
+// 	philo->meals_eaten += 1;
+// 	philo->all->ate[philo->id] = ATE;
+// 	if (all_ate(philo))
+// 		philo->all->nb_round_eat += 1;
+// 	if (philo->all->nb_round_eat == philo->all->args.number_of_times_each_philosopher_must_eat)
+// 		return (0);
+// 	// if (all_ate(philo))
+// 	// {
+// 	// 	init_ate(&philo->all);
+// 	// 	philo->all->nb_round_eat += 1;
+// 	// 	//thread pour regarder en temps reel si condition remplie
+// 	// }
+// 	gettimeofday(&philo->last_meal, NULL); // Mettre à jour AVANT de manger
+// 	pthread_mutex_unlock(&philo->meal_mutex);
+// 	// usleep(philo->all->args.time_to_eat * 1000);
+// 	smart_sleep(philo->all->args.time_to_eat, &philo->all);
+// 	// printf("Philo %d finished eating at %ld\n", philo->id, philo->last_meal.tv_usec);
+// 	return (1);
+// }
+int	eat(t_philo *philo)
+{
+    pthread_mutex_lock(&philo->meal_mutex);
+    philo->meals_eaten += 1;
+    gettimeofday(&philo->last_meal, NULL);
+	if (philo->all->args.number_of_times_each_philosopher_must_eat != -1)
+		philo->all->ate[philo->id - 1] = ATE;
+    pthread_mutex_unlock(&philo->meal_mutex);
+    smart_sleep(philo->all->args.time_to_eat, &philo->all);
+	
+	pthread_mutex_lock(&philo->all->eating_mutex);
+	if (all_ate(philo) && philo->all->nb_round_eat == philo->all->args.number_of_times_each_philosopher_must_eat)
+		return (0);
+	pthread_mutex_unlock(&philo->all->eating_mutex);
+
+    if (philo->all->args.number_of_times_each_philosopher_must_eat != -1
+        && philo->all->nb_round_eat >= philo->all->args.number_of_times_each_philosopher_must_eat)
+        return (0); // Ce philo a fini de manger
+    return (1);
 }
 
 int	no_dead(t_philo **philo)
@@ -223,13 +271,6 @@ void *philosopher_routine_argc_6(void *arg)
 {
     t_philo *philo = (t_philo *)arg;
     
-	if (philo->all->args.number_of_times_each_philosopher_must_eat != -1)
-	{	
-				printf("%ld\n", philo->all->args.nb_philo);
-
-		philo_routine_argc_6(arg);
-		return (NULL);
-	}
 	pthread_mutex_lock(&philo->meal_mutex);
 	gettimeofday(&philo->last_meal, NULL);
 	pthread_mutex_unlock(&philo->meal_mutex);
@@ -256,7 +297,11 @@ void *philosopher_routine_argc_6(void *arg)
         take_forks(philo);
         // print_status(&philo, "\e[32mis eating\033[00m 🍔");
 		print_status(&philo, "\e[32mis eating\033[00m");
-        eat(philo);
+		
+		if (!eat(philo))
+			break;
+		
+        // eat(philo);
 		if (philo->all->args.nb_philo % 2 == 0)
 			put_forks(philo);
 		else
@@ -275,9 +320,8 @@ void *philosopher_routine(void *arg)
     
 	if (philo->all->args.number_of_times_each_philosopher_must_eat != -1)
 	{	
-				printf("%ld\n", philo->all->args.nb_philo);
-
-		philo_routine_argc_6(arg);
+				// printf("%ld\n", philo->all->args.nb_philo);
+		philosopher_routine_argc_6(arg);
 		return (NULL);
 	}
 	pthread_mutex_lock(&philo->meal_mutex);
@@ -340,11 +384,20 @@ void print_status(t_philo **philo, char *str)
     int dead = (*philo)->all->there_is_dead;
     pthread_mutex_unlock(&(*philo)->all->death_mutex);
 
-    if (!dead)
+	pthread_mutex_lock(&(*philo)->all->eating_mutex);
+	int can_print;
+	if ((*philo)->all->nb_round_eat == (*philo)->all->args.number_of_times_each_philosopher_must_eat)
+		can_print = 0;
+	else
+		can_print = 1;
+	pthread_mutex_unlock(&(*philo)->all->eating_mutex);
+
+    if (!dead && can_print)
         printf("%ld %d %s\n", time, (*philo)->id, str);
-    if (dead && (ft_strcmp(str, "died") == 0))
+    if (dead && (ft_strcmp(str, "died") == 0) && can_print)
         printf("%s%ld %d %s%s\n", RED, time, (*philo)->id, str, END_COLOR);
 
+	// pthread_mutex_unlock(&(*philo)->all->eating_mutex);
     pthread_mutex_unlock(&(*philo)->all->print_mutex);
 }
 
@@ -406,7 +459,7 @@ void put_forks_odds(t_philo *philo)
     pthread_mutex_unlock(&philo->all->forks[philo->left_fork]);
 }
 
-void *	monitor_routine(void *arg)
+void *monitor_routine(void *arg)
 {
     t_all *all = (t_all *)arg;
     int i;

@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 01:44:03 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/28 14:30:47 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/29 09:41:11 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,12 +57,13 @@ typedef struct s_all
 	int				eat_same_time;
 	int				eating;
 		// int				nb_ate; //nombre de philos qui ont mange ce tour si (revient a zero une fois qu'ils ont tous mange)
-	int				**ate;
+	int				*ate;
 	int				nb_ate; //nombre de philos qui ont mange ce tour si (revient a zero une fois qu'ils ont tous mange)
 	int				nb_round_eat; //si == number_of_times_each_philosopher_must_eat ==> stop la simulation
 	pthread_mutex_t			*forks; // Dans init malloc * nb_philo
 	pthread_mutex_t			print_mutex;
 	pthread_mutex_t			death_mutex;
+	pthread_mutex_t			eating_mutex;
 	t_philo			*philo;
 }	t_all;
 
@@ -89,9 +90,9 @@ int		mutex_destroy(t_all *all);
 long	get_time_ms(void);
 void	smart_sleep(long time_in_ms, t_all **all);
 int		init_philosophers(t_all *all);
-void	eat(t_philo *philo);
+int		eat(t_philo *philo);
 int		no_dead(t_philo **philo);
-void	*philo_routine_argc_6(void *arg);
+// void	*philo_routine_argc_6(void *arg);
 void	*philosopher_routine(void *arg);
 int		ft_strcmp(char *s1, char *s2);
 void	print_status(t_philo **philo, char *str);
@@ -103,6 +104,7 @@ void	put_forks_odds(t_philo *philo);
 void	*monitor_routine(void *arg);
 long	ft_atol(char *str);
 int		init_struct_5(t_args *args, long *tab, int nb);
+void *philosopher_routine_argc_6(void *arg);
 
 
 #endif

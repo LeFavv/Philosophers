@@ -6,7 +6,7 @@
 #    By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/06/26 12:48:55 by kevwang           #+#    #+#              #
-#    Updated: 2025/08/17 17:18:27 by vafavard         ###   ########.fr        #
+#    Updated: 2025/08/29 09:16:45 by vafavard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,8 +19,6 @@ NAME = philo
 FILE =	philo.c \
 		philo_init.c \
 		philo_utils.c
-
-
 
 SRC = ${FILE:.c=.o}
 
@@ -37,8 +35,6 @@ clean:
 	rm -f philo.o \
 		philo_init.o \
 		philo_utils.o
-
-
 
 fclean: clean
 	rm -f philo
