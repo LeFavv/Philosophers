@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/21 23:11:50 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/29 11:07:07 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/29 19:36:28 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,6 +156,7 @@ int	init_philosophers(t_all *all)
 	}
 	//a la
 	all->there_is_dead = 0;
+	all->nb_round_eat = 0;
 	return (1);
 }
 
@@ -386,14 +387,16 @@ void print_status(t_philo **philo, char *str)
 
 	pthread_mutex_lock(&(*philo)->all->eating_mutex);
 	int can_print;
+	if (all_ate(*philo) && (*philo)->all->nb_round_eat == 
+		(*philo)->all->args.number_of_times_each_philosopher_must_eat)
+		return ;
 	if ((*philo)->all->nb_round_eat == (*philo)->all->args.number_of_times_each_philosopher_must_eat)
 		can_print = 0;
 	else
 		can_print = 1;
 	pthread_mutex_unlock(&(*philo)->all->eating_mutex);
-
     if (!dead && can_print)
-        printf("%ld %d %s\n", time, (*philo)->id, str);
+        printf("%ld %d %s %d\n", time, (*philo)->id, str, (*philo)->all->nb_round_eat);
     if (dead && (ft_strcmp(str, "died") == 0) && can_print)
         printf("%s%ld %d %s%s\n", RED, time, (*philo)->id, str, END_COLOR);
 
