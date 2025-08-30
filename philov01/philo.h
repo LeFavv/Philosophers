@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 01:44:03 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/30 17:07:52 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/30 17:25:14 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,6 @@ typedef struct s_status
 //temporaire
 void    ft_free_all(t_all *all, t_args *args, long	*tab);
 
-
 //eat
 int		all_ate(t_philo *philo);
 int		eat(t_philo *philo);
@@ -98,6 +97,8 @@ void	put_forks_odds(t_philo *philo);
 int		init_struct_5(t_args *args, long *tab, int nb);
 int		init_philosophers(t_all *all);
 void	init_ate(t_all **all);
+int		mutex_init(t_all *all);
+int		mutex_init_2(t_all *all);
 
 //philo_utils
 long	ft_atol(char *str);

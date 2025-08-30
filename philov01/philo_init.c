@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 03:03:55 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/30 12:48:25 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/30 17:24:46 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,9 @@
 int		init_struct_5(t_args *args, long *tab, int nb);
 int		init_philosophers(t_all *all);
 void	init_ate(t_all **all);
+int		mutex_init(t_all *all);
+int		mutex_init_2(t_all *all);
+
 
 int	init_struct_5(t_args *args, long *tab, int nb)
 {
@@ -29,27 +32,21 @@ int	init_struct_5(t_args *args, long *tab, int nb)
 	return (1);
 }
 
-int	init_philosophers(t_all *all)
+int	mutex_init(t_all *all)
 {
-	int	i;
-
-	all->philo = malloc(sizeof(t_philo) * all->args.nb_philo);
-	if (!all->philo)
-		return (0);
-
-	all->forks = malloc(sizeof(pthread_mutex_t) * all->args.nb_philo);
-	if (!all->forks)
-		return (free(all->philo), 0);
-
-	// Mutex globaux
 	if (pthread_mutex_init(&all->death_mutex, NULL))
 		return (0);
 	if (pthread_mutex_init(&all->print_mutex, NULL))
 		return (0);
 	if (pthread_mutex_init(&all->eating_mutex, NULL))
 		return (0);
+	return (1);
+}
 
-	// Mutex par philosophe et initialisation
+int	mutex_init_2(t_all *all)
+{
+	int i;
+
 	i = 0;
 	while (i < all->args.nb_philo)
 	{
@@ -66,7 +63,21 @@ int	init_philosophers(t_all *all)
 		gettimeofday(&all->philo[i].last_meal, NULL);
 		i++;
 	}
-	//new part de la
+	return (1);
+}
+
+int	init_philosophers(t_all *all)
+{
+	all->philo = malloc(sizeof(t_philo) * all->args.nb_philo);
+	if (!all->philo)
+		return (0);
+	all->forks = malloc(sizeof(pthread_mutex_t) * all->args.nb_philo);
+	if (!all->forks)
+		return (free(all->philo), 0);
+	if (!mutex_init(all))
+		return (0);
+	if (!mutex_init_2(all))
+		return (0);
 	if (all->args.number_of_times_each_philosopher_must_eat != -1)
 	{
 		all->ate = malloc(sizeof(int) * all->args.nb_philo);
@@ -74,13 +85,12 @@ int	init_philosophers(t_all *all)
 			return (0);
 		init_ate(&all);
 	}
-	//a la
 	all->there_is_dead = 0;
 	all->nb_round_eat = 0;
 	return (1);
 }
 
-void	init_ate(t_all **all) // je dois le malloc a la bonne taille aussi
+void	init_ate(t_all **all)
 {
 	int i = 0;
 
