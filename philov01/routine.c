@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 03:15:31 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/30 03:16:48 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/30 12:45:58 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,16 @@ void *philosopher_routine_argc_6(void *arg)
         // print_status(&philo, "\e[32mis eating\033[00m 🍔");
 		print_status_6(&philo, "\e[32mis eating\033[00m");
 		
+		// if (!eat(philo))
+		// 	break;
 		if (!eat(philo))
-			break;
+		{
+		    if (philo->all->args.nb_philo % 2 == 0)
+		        put_forks(philo);
+		    else
+		        put_forks_odds(philo);
+		    break;  // on quitte seulement après avoir libéré
+		}
 		
         // eat(philo);
 		if (philo->all->args.nb_philo % 2 == 0)
@@ -99,7 +107,9 @@ void *philosopher_routine(void *arg)
         take_forks(philo);
         // print_status(&philo, "\e[32mis eating\033[00m 🍔");
 		print_status(&philo, "\e[32mis eating\033[00m");
-        eat(philo);
+       if (!eat(philo))
+			break;
+
 		if (philo->all->args.nb_philo % 2 == 0)
 			put_forks(philo);
 		else

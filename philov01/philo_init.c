@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 03:03:55 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/30 02:07:45 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/30 12:48:25 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ int	init_philosophers(t_all *all)
 	//new part de la
 	if (all->args.number_of_times_each_philosopher_must_eat != -1)
 	{
-		all->ate = malloc(sizeof(int) * all->args.number_of_times_each_philosopher_must_eat);
+		all->ate = malloc(sizeof(int) * all->args.nb_philo);
 		if (!all->ate)
 			return (0);
 		init_ate(&all);
