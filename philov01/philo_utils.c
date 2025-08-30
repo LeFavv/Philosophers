@@ -6,11 +6,14 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 02:41:27 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/17 02:42:03 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/30 02:09:08 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+long	ft_atol(char *str);
+int		ft_strcmp(char *s1, char *s2);
 
 long	ft_atol(char *str)
 {
@@ -32,4 +35,13 @@ long	ft_atol(char *str)
 		i++;
 	}
 	return (nb * sign);
+}
+
+int	ft_strcmp(char *s1, char *s2)
+{
+	int i = 0;
+	
+	while (s1[i] && s2[i] && s1[i] == s2[i])
+		i++;
+	return (s1[i] - s2[i]);
 }

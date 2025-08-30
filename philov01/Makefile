@@ -6,7 +6,7 @@
 #    By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/06/26 12:48:55 by kevwang           #+#    #+#              #
-#    Updated: 2025/08/29 09:16:45 by vafavard         ###   ########.fr        #
+#    Updated: 2025/08/30 02:17:49 by vafavard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,11 @@ NAME = philo
 
 FILE =	philo.c \
 		philo_init.c \
-		philo_utils.c
+		philo_utils.c \
+		fork.c \
+		time.c \
+		thread_and_mutex.c
+
 
 SRC = ${FILE:.c=.o}
 
@@ -34,7 +38,10 @@ ${NAME}: ${SRC}
 clean:
 	rm -f philo.o \
 		philo_init.o \
-		philo_utils.o
+		philo_utils.o \
+		fork.o \
+		time.o \
+		thread_and_mutex.o
 
 fclean: clean
 	rm -f philo

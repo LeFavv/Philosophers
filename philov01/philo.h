@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 01:44:03 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/29 09:41:11 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/30 02:08:08 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,8 @@ void	put_forks_odds(t_philo *philo);
 void	*monitor_routine(void *arg);
 long	ft_atol(char *str);
 int		init_struct_5(t_args *args, long *tab, int nb);
-void *philosopher_routine_argc_6(void *arg);
+void 	*philosopher_routine_argc_6(void *arg);
+void	init_ate(t_all **all);
 
 
 #endif
