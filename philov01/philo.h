@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 01:44:03 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/30 02:08:08 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/30 03:29:05 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,6 @@
 # include <unistd.h>
 # include <sys/time.h>
 # include <pthread.h>
-
-#define EATING 1
-#define THINKING 2
-#define SLEEPING 3
-#define DEAD 4
 
 #define YELLOW "\e[33m"
 #define RED "\e[31m"
@@ -53,14 +48,13 @@ typedef struct s_all
 	struct timeval	end;
 	int	there_is_dead;
 	t_args			args;
-	pthread_t		*threads; //tableau de thread ?
-	int				eat_same_time;
-	int				eating;
-		// int				nb_ate; //nombre de philos qui ont mange ce tour si (revient a zero une fois qu'ils ont tous mange)
+	pthread_t		*threads;
+	int				eat_same_time; //useless
+	int				eating; //useless
 	int				*ate;
-	int				nb_ate; //nombre de philos qui ont mange ce tour si (revient a zero une fois qu'ils ont tous mange)
-	int				nb_round_eat; //si == number_of_times_each_philosopher_must_eat ==> stop la simulation
-	pthread_mutex_t			*forks; // Dans init malloc * nb_philo
+	int				nb_ate; //useless
+	int				nb_round_eat;
+	pthread_mutex_t			*forks;
 	pthread_mutex_t			print_mutex;
 	pthread_mutex_t			death_mutex;
 	pthread_mutex_t			eating_mutex;
@@ -74,7 +68,7 @@ typedef struct s_philo
 	int right_fork;
 	pthread_t thread;
 	t_all *all;
-	int	meals_eaten;
+	int	meals_eaten; //useless
 	struct timeval last_meal;
 	pthread_mutex_t			meal_mutex;
 }	t_philo;
@@ -85,27 +79,43 @@ typedef struct s_status
 	int status;
 }	t_status;
 
-long	time_diff_ms(struct timeval *start, struct timeval *end);
-int		mutex_destroy(t_all *all);
-long	get_time_ms(void);
-void	smart_sleep(long time_in_ms, t_all **all);
-int		init_philosophers(t_all *all);
+//eat
+int		all_ate(t_philo *philo);
 int		eat(t_philo *philo);
 int		no_dead(t_philo **philo);
-// void	*philo_routine_argc_6(void *arg);
-void	*philosopher_routine(void *arg);
-int		ft_strcmp(char *s1, char *s2);
-void	print_status(t_philo **philo, char *str);
+
+//fork
 void	take_forks(t_philo *philo);
-int		join_threads(t_all *all);
-int		create_threads(t_all *all);
 void	put_forks(t_philo *philo);
 void	put_forks_odds(t_philo *philo);
-void	*monitor_routine(void *arg);
-long	ft_atol(char *str);
+
+//philo_init
 int		init_struct_5(t_args *args, long *tab, int nb);
-void 	*philosopher_routine_argc_6(void *arg);
+int		init_philosophers(t_all *all);
 void	init_ate(t_all **all);
+
+//philo_utils
+long	ft_atol(char *str);
+int		ft_strcmp(char *s1, char *s2);
+
+//print
+void    print_status(t_philo **philo, char *str);
+void    print_status_6(t_philo **philo, char *str);
+
+//routine
+void	*philosopher_routine_argc_6(void *arg);
+void	*philosopher_routine(void *arg);
+void    *monitor_routine(void *arg);
+
+//thread_and_mutex
+int		mutex_destroy(t_all *all);
+int		join_threads(t_all *all);
+int 	create_threads(t_all *all);
+
+//time
+long	time_diff_ms(struct timeval *start, struct timeval *end);
+long	get_time_ms(void);
+void	smart_sleep(long time_in_ms, t_all **all);
 
 
 #endif
