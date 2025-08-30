@@ -6,26 +6,22 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/21 23:11:50 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/30 02:21:25 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/30 02:52:51 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #include "philo.h"
 
-// implementer les rounds pour savoir qui a eat
 // checks parsing dans le main avec messages adequats
 // totu mettre dans dosseir philo
-// gerer le cas de sleep pour quitter si quelqu'un dort mais que le programme est terminado
 
 int		eat(t_philo *philo);
 int		no_dead(t_philo **philo);
 void	*philosopher_routine_argc_6(void *arg);
 void	*philosopher_routine(void *arg);
-int		create_threads(t_all *all);
 void	*monitor_routine(void *arg);
 void	print_status_6(t_philo **philo, char *str);
-
 
 int	all_ate(t_philo *philo)
 {
@@ -210,16 +206,18 @@ void print_status(t_philo **philo, char *str)
 void print_status_6(t_philo **philo, char *str)
 {
     long time;
+	int dead;
+	int can_print;
+
     pthread_mutex_lock(&(*philo)->all->print_mutex);
     gettimeofday(&(*philo)->all->end, NULL);
     time = time_diff_ms(&(*philo)->all->start, &(*philo)->all->end);
 
     pthread_mutex_lock(&(*philo)->all->death_mutex);
-    int dead = (*philo)->all->there_is_dead;
+    dead = (*philo)->all->there_is_dead;
     pthread_mutex_unlock(&(*philo)->all->death_mutex);
 
 	pthread_mutex_lock(&(*philo)->all->eating_mutex);
-	int can_print;
 	if (all_ate(*philo) && (*philo)->all->nb_round_eat == 
 		(*philo)->all->args.number_of_times_each_philosopher_must_eat)
 		return ;
@@ -276,7 +274,6 @@ int main(int argc, char **argv)
 	t_all	*all;
 	long	*tab;
 	int		i = 0;
-	// long	 time;
 
 	if (argc == 5 || argc == 6)
 	{
@@ -296,6 +293,8 @@ int main(int argc, char **argv)
 		{
 			
 			tab[i] = ft_atol(argv[i + 1]);
+			if (tab[i] < 0)
+				return (printf("%sNo negatives\n%s", RED, END_COLOR), 1);
 			i++;
 		}
 		if (!init_struct_5(args, tab, argc - 1))
@@ -340,5 +339,7 @@ int main(int argc, char **argv)
 		free(all);
 		free(args);
 	}
+	else
+		printf("%sBad arguments\n%s", RED, END_COLOR);
 	return (0);
 }
