@@ -6,7 +6,7 @@
 #    By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/06/26 12:48:55 by kevwang           #+#    #+#              #
-#    Updated: 2025/08/30 03:20:24 by vafavard         ###   ########.fr        #
+#    Updated: 2025/08/30 13:19:08 by vafavard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,7 +24,8 @@ FILE =	philo.c \
 		thread_and_mutex.c \
 		eat.c \
 		routine.c \
-		print.c
+		print.c \
+		free.c
 
 
 SRC = ${FILE:.c=.o}
@@ -47,7 +48,8 @@ clean:
 		thread_and_mutex.o \
 		eat.o \
 		routine.o \
-		print.o
+		print.o \
+		free.o
 
 fclean: clean
 	rm -f philo

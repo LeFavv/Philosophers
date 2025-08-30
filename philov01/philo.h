@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 01:44:03 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/30 03:29:05 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/30 13:30:17 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,10 @@ typedef struct s_status
 	int	nb_philo; 
 	int status;
 }	t_status;
+
+//temporaire
+void    ft_free_all(t_all *all, t_args *args, long	*tab);
+
 
 //eat
 int		all_ate(t_philo *philo);

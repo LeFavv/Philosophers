@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 03:18:59 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/30 03:20:04 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/30 13:37:00 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,11 +44,9 @@ void print_status_6(t_philo **philo, char *str)
     pthread_mutex_lock(&(*philo)->all->print_mutex);
     gettimeofday(&(*philo)->all->end, NULL);
     time = time_diff_ms(&(*philo)->all->start, &(*philo)->all->end);
-
     pthread_mutex_lock(&(*philo)->all->death_mutex);
     dead = (*philo)->all->there_is_dead;
     pthread_mutex_unlock(&(*philo)->all->death_mutex);
-
 	pthread_mutex_lock(&(*philo)->all->eating_mutex);
 	if (all_ate(*philo) && (*philo)->all->nb_round_eat == 
 		(*philo)->all->args.number_of_times_each_philosopher_must_eat)
@@ -62,7 +60,6 @@ void print_status_6(t_philo **philo, char *str)
         printf("%ld %d %s %d\n", time, (*philo)->id, str, (*philo)->all->nb_round_eat);
     if (dead && (ft_strcmp(str, "died") == 0) && can_print)
         printf("%s%ld %d %s%s\n", RED, time, (*philo)->id, str, END_COLOR);
-
-	// pthread_mutex_unlock(&(*philo)->all->eating_mutex);
     pthread_mutex_unlock(&(*philo)->all->print_mutex);
 }
+
