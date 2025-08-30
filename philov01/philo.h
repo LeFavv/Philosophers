@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 01:44:03 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/30 17:25:14 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/30 18:25:32 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,6 +124,11 @@ int 	create_threads(t_all *all);
 long	time_diff_ms(struct timeval *start, struct timeval *end);
 long	get_time_ms(void);
 void	smart_sleep(long time_in_ms, t_all **all);
+
+//philo.c
+void	pthread_gestion(t_all *all);
+int		alloc_all(t_args **args, t_all **all, long **tab, int size, int *i);
+void	fight_against_norm(t_args *args, t_all *all, long *tab);
 
 
 #endif

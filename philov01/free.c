@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 13:12:20 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/30 16:50:05 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/30 17:44:24 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 //penser a check si ca exister avant de free
 void ft_free_all(t_all *all, t_args *args, long *tab)
 {
+	mutex_destroy(all);
     if (all)
     {
         if (all->philo)
@@ -28,5 +29,7 @@ void ft_free_all(t_all *all, t_args *args, long *tab)
     if (tab)
         free(tab);
     if (args)
-        free(args);
+	{
+    	free(args);
+	}
 }
