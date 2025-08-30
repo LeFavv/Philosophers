@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 01:44:03 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/30 13:30:17 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/30 17:07:52 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <unistd.h>
 # include <sys/time.h>
 # include <pthread.h>
+# include <string.h>
 
 #define YELLOW "\e[33m"
 #define RED "\e[31m"
@@ -110,6 +111,8 @@ void    print_status_6(t_philo **philo, char *str);
 void	*philosopher_routine_argc_6(void *arg);
 void	*philosopher_routine(void *arg);
 void    *monitor_routine(void *arg);
+void	last_meal(t_philo *philo);
+void	put_the_right_fork(t_philo *philo);
 
 //thread_and_mutex
 int		mutex_destroy(t_all *all);

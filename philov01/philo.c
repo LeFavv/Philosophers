@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/21 23:11:50 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/30 13:31:49 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/30 16:48:46 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ int main(int argc, char **argv)
 		all = malloc(sizeof(t_all));
 		if (!all)
 			return (free(args), 1);
+		memset(all, 0, sizeof(t_all));
 		gettimeofday(&all->start, NULL);
 		tab = malloc(sizeof(long) * (argc - 1));
 		if (!tab)
