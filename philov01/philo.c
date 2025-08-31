@@ -6,12 +6,12 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/21 23:11:50 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/31 10:16:55 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/31 12:20:30 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
+//test 5 800 200 200 doit durer 40 secondes au moins
 void	pthread_gestion(t_all *all);
 int		alloc_all(t_args **args, t_all **all, long **tab, int size);
 void	fight_against_norm(t_args *args, t_all *all, long *tab);

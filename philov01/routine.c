@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 03:15:31 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/31 11:07:31 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/31 12:51:20 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,16 +14,12 @@
 
 void	*philosopher_routine_argc_6(void *arg);
 void	*philosopher_routine(void *arg);
+void	philosopher_routine_solo(t_philo *philo);
 void	*monitor_routine(void *arg);
 void	last_meal(t_philo *philo);
 void	put_the_right_fork(t_philo *philo);
+void	if_dead(t_philo *philo, int *dead);
 
-void	last_meal(t_philo *philo)
-{
-	pthread_mutex_lock(&philo->meal_mutex);
-	gettimeofday(&philo->last_meal, NULL);
-	pthread_mutex_unlock(&philo->meal_mutex);
-}
 
 void	put_the_right_fork(t_philo *philo)
 {
@@ -35,10 +31,13 @@ void	put_the_right_fork(t_philo *philo)
 
 void	philosopher_routine_solo(t_philo *philo)
 {
+	int dead;
+	
 	print_status(&philo, "has taken a fork");
 	usleep(philo->all->args.time_to_die * 1000);
-	print_status(&philo, "died");
-	philo->all->there_is_dead = 1;
+	if_dead(philo, &dead);
+	// print_status(&philo, "died");
+	// philo->all->there_is_dead = 1;
 }
 
 void	*philosopher_routine_argc_6(void *arg)
@@ -69,12 +68,7 @@ void	*philosopher_routine_argc_6(void *arg)
 	return (NULL);
 }
 
-void	if_dead(t_philo *philo, int *dead)
-{
-	pthread_mutex_lock(&philo->all->death_mutex);
-	*dead = philo->all->there_is_dead;
-	pthread_mutex_unlock(&philo->all->death_mutex);
-}
+
 
 void	*philosopher_routine(void *arg)
 {

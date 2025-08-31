@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 02:41:27 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/31 10:08:42 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/31 11:14:28 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,4 +48,16 @@ int	ft_strcmp(char *s1, char *s2)
 	while (s1[i] && s2[i] && s1[i] == s2[i])
 		i++;
 	return (s1[i] - s2[i]);
+}
+void	last_meal(t_philo *philo)
+{
+	pthread_mutex_lock(&philo->meal_mutex);
+	gettimeofday(&philo->last_meal, NULL);
+	pthread_mutex_unlock(&philo->meal_mutex);
+}
+void	if_dead(t_philo *philo, int *dead)
+{
+	pthread_mutex_lock(&philo->all->death_mutex);
+	*dead = philo->all->there_is_dead;
+	pthread_mutex_unlock(&philo->all->death_mutex);
 }
