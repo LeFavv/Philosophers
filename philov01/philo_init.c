@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 03:03:55 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/30 17:24:46 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/31 10:07:17 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@ void	init_ate(t_all **all);
 int		mutex_init(t_all *all);
 int		mutex_init_2(t_all *all);
 
-
 int	init_struct_5(t_args *args, long *tab, int nb)
 {
 	args->nb_philo = tab[0];
@@ -26,9 +25,9 @@ int	init_struct_5(t_args *args, long *tab, int nb)
 	args->time_to_eat = tab[2];
 	args->time_to_sleep = tab[3];
 	if (nb == 5)
-		args->number_of_times_each_philosopher_must_eat = tab[4];
+		args->nb_time_eat = tab[4];
 	else
-		args->number_of_times_each_philosopher_must_eat = -1;
+		args->nb_time_eat = -1;
 	return (1);
 }
 
@@ -45,7 +44,7 @@ int	mutex_init(t_all *all)
 
 int	mutex_init_2(t_all *all)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (i < all->args.nb_philo)
@@ -54,7 +53,6 @@ int	mutex_init_2(t_all *all)
 			return (0);
 		if (pthread_mutex_init(&all->philo[i].meal_mutex, NULL) != 0)
 			return (0);
-
 		all->philo[i].id = i + 1;
 		all->philo[i].left_fork = i;
 		all->philo[i].right_fork = (i + 1) % all->args.nb_philo;
@@ -78,7 +76,7 @@ int	init_philosophers(t_all *all)
 		return (0);
 	if (!mutex_init_2(all))
 		return (0);
-	if (all->args.number_of_times_each_philosopher_must_eat != -1)
+	if (all->args.nb_time_eat != -1)
 	{
 		all->ate = malloc(sizeof(int) * all->args.nb_philo);
 		if (!all->ate)
@@ -92,8 +90,9 @@ int	init_philosophers(t_all *all)
 
 void	init_ate(t_all **all)
 {
-	int i = 0;
+	int	i;
 
+	i = 0;
 	while (i < (*all)->args.nb_philo)
 	{
 		(*all)->ate[i] = NEED_TO_EAT;

@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 01:44:03 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/30 18:25:32 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/31 10:10:46 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ typedef struct s_args
 	long	time_to_die;
 	long	time_to_eat;
 	long	time_to_sleep;
-	long	number_of_times_each_philosopher_must_eat;
+	long	nb_time_eat;
 }	t_args;
 
 
@@ -127,7 +127,7 @@ void	smart_sleep(long time_in_ms, t_all **all);
 
 //philo.c
 void	pthread_gestion(t_all *all);
-int		alloc_all(t_args **args, t_all **all, long **tab, int size, int *i);
+int		alloc_all(t_args **args, t_all **all, long **tab, int size);
 void	fight_against_norm(t_args *args, t_all *all, long *tab);
 
 
