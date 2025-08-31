@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 01:44:03 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/31 15:59:46 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/31 16:05:00 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ typedef struct s_status
 	int	status;
 }	t_status;
 
-//temporaire
+//free
 void	ft_free_all(t_all *all, t_args *args, long	*tab);
 
 //eat
@@ -102,6 +102,8 @@ int		mutex_init_2(t_all *all);
 //philo_utils
 long	ft_atol(char *str);
 int		ft_strcmp(char *s1, char *s2);
+void	last_meal(t_philo *philo);
+void	if_dead(t_philo *philo, int *dead);
 
 //print
 void	print_status(t_philo **philo, char *str);
@@ -110,8 +112,8 @@ void	print_status_6(t_philo **philo, char *str);
 //routine
 void	*philosopher_routine_argc_6(void *arg);
 void	*philosopher_routine(void *arg);
+void	philosopher_routine_solo(t_philo *philo);
 void	*monitor_routine(void *arg);
-void	last_meal(t_philo *philo);
 void	put_the_right_fork(t_philo *philo);
 
 //thread_and_mutex
