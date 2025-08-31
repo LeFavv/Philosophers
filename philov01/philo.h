@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 01:44:03 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/31 10:10:46 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/31 15:59:46 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,17 +20,17 @@
 # include <pthread.h>
 # include <string.h>
 
-#define YELLOW "\e[33m"
-#define RED "\e[31m"
-#define GREEN "\e[32m"
-#define	BLUE "\e[34m"
-#define END_COLOR "\033[00m"
+# define YELLOW "\e[33m"
+# define RED "\e[31m"
+# define GREEN "\e[32m"
+# define BLUE "\e[34m"
+# define END_COLOR "\033[00m"
 
-#define ATE 1
-#define NEED_TO_EAT 0
+# define ATE 1
+# define NEED_TO_EAT 0
 
-typedef struct s_philo t_philo;
-typedef struct s_all t_all;
+typedef struct s_philo	t_philo;
+typedef struct s_all	t_all;
 
 typedef struct s_args
 {
@@ -41,13 +41,12 @@ typedef struct s_args
 	long	nb_time_eat;
 }	t_args;
 
-
 typedef struct s_all
 {
 	int				nb_forks;
 	struct timeval	start;
 	struct timeval	end;
-	int	there_is_dead;
+	int				there_is_dead;
 	t_args			args;
 	pthread_t		*threads;
 	int				eat_same_time; //useless
@@ -55,33 +54,33 @@ typedef struct s_all
 	int				*ate;
 	int				nb_ate; //useless
 	int				nb_round_eat;
-	pthread_mutex_t			*forks;
-	pthread_mutex_t			print_mutex;
-	pthread_mutex_t			death_mutex;
-	pthread_mutex_t			eating_mutex;
+	pthread_mutex_t	*forks;
+	pthread_mutex_t	print_mutex;
+	pthread_mutex_t	death_mutex;
+	pthread_mutex_t	eating_mutex;
 	t_philo			*philo;
 }	t_all;
 
 typedef struct s_philo
 {
-	int	id;
-	int left_fork;
-	int right_fork;
-	pthread_t thread;
-	t_all *all;
-	int	meals_eaten; //useless
-	struct timeval last_meal;
-	pthread_mutex_t			meal_mutex;
+	int				id;
+	int				left_fork;
+	int				right_fork;
+	pthread_t		thread;
+	t_all			*all;
+	int				meals_eaten; //useless
+	struct timeval	last_meal;
+	pthread_mutex_t	meal_mutex;
 }	t_philo;
 
 typedef struct s_status
 {
-	int	nb_philo; 
-	int status;
+	int	nb_philo;
+	int	status;
 }	t_status;
 
 //temporaire
-void    ft_free_all(t_all *all, t_args *args, long	*tab);
+void	ft_free_all(t_all *all, t_args *args, long	*tab);
 
 //eat
 int		all_ate(t_philo *philo);
@@ -105,20 +104,20 @@ long	ft_atol(char *str);
 int		ft_strcmp(char *s1, char *s2);
 
 //print
-void    print_status(t_philo **philo, char *str);
-void    print_status_6(t_philo **philo, char *str);
+void	print_status(t_philo **philo, char *str);
+void	print_status_6(t_philo **philo, char *str);
 
 //routine
 void	*philosopher_routine_argc_6(void *arg);
 void	*philosopher_routine(void *arg);
-void    *monitor_routine(void *arg);
+void	*monitor_routine(void *arg);
 void	last_meal(t_philo *philo);
 void	put_the_right_fork(t_philo *philo);
 
 //thread_and_mutex
 int		mutex_destroy(t_all *all);
 int		join_threads(t_all *all);
-int 	create_threads(t_all *all);
+int		create_threads(t_all *all);
 
 //time
 long	time_diff_ms(struct timeval *start, struct timeval *end);
@@ -129,6 +128,5 @@ void	smart_sleep(long time_in_ms, t_all **all);
 void	pthread_gestion(t_all *all);
 int		alloc_all(t_args **args, t_all **all, long **tab, int size);
 void	fight_against_norm(t_args *args, t_all *all, long *tab);
-
 
 #endif

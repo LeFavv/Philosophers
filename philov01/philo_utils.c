@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 02:41:27 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/31 11:14:28 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/08/31 15:48:10 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 
 long	ft_atol(char *str);
 int		ft_strcmp(char *s1, char *s2);
+void	last_meal(t_philo *philo);
+void	if_dead(t_philo *philo, int *dead);
 
 long	ft_atol(char *str)
 {
@@ -49,12 +51,14 @@ int	ft_strcmp(char *s1, char *s2)
 		i++;
 	return (s1[i] - s2[i]);
 }
+
 void	last_meal(t_philo *philo)
 {
 	pthread_mutex_lock(&philo->meal_mutex);
 	gettimeofday(&philo->last_meal, NULL);
 	pthread_mutex_unlock(&philo->meal_mutex);
 }
+
 void	if_dead(t_philo *philo, int *dead)
 {
 	pthread_mutex_lock(&philo->all->death_mutex);
