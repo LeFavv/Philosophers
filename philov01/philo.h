@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 01:44:03 by vafavard          #+#    #+#             */
-/*   Updated: 2025/09/01 13:00:08 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/09/01 13:04:51 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,10 +50,10 @@ typedef struct s_all
 	int				there_is_dead;
 	t_args			args;
 	pthread_t		*threads;
-	int				eat_same_time; //useless
-	int				eating; //useless
+	int				eat_same_time;
+	int				eating;
 	int				*ate;
-	int				nb_ate; //useless
+	int				nb_ate;
 	int				nb_round_eat;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	print_mutex;
