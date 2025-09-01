@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 03:18:59 by vafavard          #+#    #+#             */
-/*   Updated: 2025/09/01 13:04:01 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/09/01 13:16:07 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void	print_status(t_philo **philo, char *str)
 {
 	long	time;
 	int		dead;
-	
+
 	pthread_mutex_lock(&(*philo)->all->print_mutex);
 	pthread_mutex_lock(&(*philo)->all->death_mutex);
 	dead = (*philo)->all->there_is_dead;
