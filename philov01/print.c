@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 03:18:59 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/31 10:21:46 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/09/01 10:18:04 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,13 +19,16 @@ void	print_status(t_philo **philo, char *str)
 {
 	long	time;
 	int		dead;
-
-	pthread_mutex_lock(&(*philo)->all->print_mutex);
-	gettimeofday(&(*philo)->all->end, NULL);
-	time = time_diff_ms(&(*philo)->all->start, &(*philo)->all->end);
 	pthread_mutex_lock(&(*philo)->all->death_mutex);
 	dead = (*philo)->all->there_is_dead;
 	pthread_mutex_unlock(&(*philo)->all->death_mutex);
+	
+	pthread_mutex_lock(&(*philo)->all->print_mutex);
+	gettimeofday(&(*philo)->all->end, NULL);
+	time = time_diff_ms(&(*philo)->all->start, &(*philo)->all->end);
+	// pthread_mutex_lock(&(*philo)->all->death_mutex);
+	// dead = (*philo)->all->there_is_dead;
+	// pthread_mutex_unlock(&(*philo)->all->death_mutex);
 	if (!dead)
 		printf("%ld %d %s\n", time, (*philo)->id, str);
 	if (dead && (ft_strcmp(str, "died") == 0))
@@ -61,3 +64,4 @@ void	print_status_6(t_philo **philo, char *str)
 		printf("%s%ld %d %s%s\n", RED, time, (*philo)->id, str, END_COLOR);
 	pthread_mutex_unlock(&(*philo)->all->print_mutex);
 }
+

@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 03:13:15 by vafavard          #+#    #+#             */
-/*   Updated: 2025/09/01 10:44:42 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/09/01 09:50:52 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ int	all_ate(t_philo *philo)
 		philo->all->there_is_dead = 1;
 		pthread_mutex_unlock(&philo->all->death_mutex);
 	}
-	printf("%s%d Round Commpleted%s\n", PURPLE, philo->all->nb_round_eat, END_COLOR);
+	printf("J'arrive la\n");
 	init_ate(&philo->all);
 	return (1);
 }
@@ -62,25 +62,48 @@ int	eat(t_philo *philo)
 	return (1);
 }
 
-int	no_dead(t_philo **philo)
-{
-	struct timeval	current_time;
-	long			time_since_last_meal;
+// int	no_dead(t_philo **philo)
+// {
+// 	struct timeval	current_time;
+// 	long			time_since_last_meal;
 
-	gettimeofday(&current_time, NULL);
-	pthread_mutex_lock(&(*philo)->meal_mutex);
-	time_since_last_meal = time_diff_ms(&(*philo)->last_meal, &current_time);
-	pthread_mutex_unlock(&(*philo)->meal_mutex);
-	if (time_since_last_meal > (*philo)->all->args.time_to_die)
-	{
-		// pthread_mutex_lock(&(*philo)->all->death_mutex);
-		if ((*philo)->all->there_is_dead == 0)
+// 	gettimeofday(&current_time, NULL);
+// 	pthread_mutex_lock(&(*philo)->meal_mutex);
+// 	time_since_last_meal = time_diff_ms(&(*philo)->last_meal, &current_time);
+// 	pthread_mutex_unlock(&(*philo)->meal_mutex);
+// 	if (time_since_last_meal > (*philo)->all->args.time_to_die)
+// 	{
+// 		pthread_mutex_lock(&(*philo)->all->death_mutex);
+// 		if ((*philo)->all->there_is_dead == 0)
+// 		{
+// 			(*philo)->all->there_is_dead = 1;
+// 			print_status(philo, "died", 1);
+// 		}
+// 		pthread_mutex_unlock(&(*philo)->all->death_mutex);
+// 		return (0);
+// 	}
+// 	return (1);
+// }
+
+int no_dead(t_philo **philo)
+{
+    struct timeval current_time;
+    long time_since_last_meal;
+
+    gettimeofday(&current_time, NULL);
+    pthread_mutex_lock(&(*philo)->meal_mutex);
+    time_since_last_meal = time_diff_ms(&(*philo)->last_meal, &current_time);
+    pthread_mutex_unlock(&(*philo)->meal_mutex);
+
+    if (time_since_last_meal > (*philo)->all->args.time_to_die)
+    {
+        pthread_mutex_lock(&(*philo)->all->death_mutex);
+        if ((*philo)->all->there_is_dead == 0)
 		{
-			(*philo)->all->there_is_dead = 1;
-			// print_status(philo, "died");
-		}
-		// pthread_mutex_unlock(&(*philo)->all->death_mutex);
-		return (0);
-	}
-	return (1);
+            (*philo)->all->there_is_dead = 1;
+        }
+        pthread_mutex_unlock(&(*philo)->all->death_mutex);
+        return 0;
+    }
+    return 1;
 }

@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 01:44:03 by vafavard          #+#    #+#             */
-/*   Updated: 2025/09/01 10:26:19 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/09/01 10:06:36 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@
 # define RED "\e[31m"
 # define GREEN "\e[32m"
 # define BLUE "\e[34m"
-# define PURPLE "\e[35m"
 # define END_COLOR "\033[00m"
 
 # define ATE 1
@@ -80,6 +79,11 @@ typedef struct s_status
 	int	status;
 }	t_status;
 
+//test
+void print_status(t_philo **philo, char *str, int force);
+void print_status_if_allowed(t_philo **philo, char *str);
+
+
 //free
 void	ft_free_all(t_all *all, t_args *args, long	*tab);
 
@@ -107,7 +111,7 @@ void	last_meal(t_philo *philo);
 void	if_dead(t_philo *philo, int *dead);
 
 //print
-void	print_status(t_philo **philo, char *str);
+// void	print_status(t_philo **philo, char *str);
 void	print_status_6(t_philo **philo, char *str);
 
 //routine
