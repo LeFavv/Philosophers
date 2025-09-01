@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 03:13:15 by vafavard          #+#    #+#             */
-/*   Updated: 2025/09/01 10:44:42 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/09/01 12:51:22 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,8 @@ int	all_ate(t_philo *philo)
 		philo->all->there_is_dead = 1;
 		pthread_mutex_unlock(&philo->all->death_mutex);
 	}
-	printf("%s%d Round Commpleted%s\n", PURPLE, philo->all->nb_round_eat, END_COLOR);
+	printf("%s%d Round Commpleted%s\n",
+		PURPLE, philo->all->nb_round_eat, END_COLOR);
 	init_ate(&philo->all);
 	return (1);
 }
@@ -73,13 +74,10 @@ int	no_dead(t_philo **philo)
 	pthread_mutex_unlock(&(*philo)->meal_mutex);
 	if (time_since_last_meal > (*philo)->all->args.time_to_die)
 	{
-		// pthread_mutex_lock(&(*philo)->all->death_mutex);
 		if ((*philo)->all->there_is_dead == 0)
 		{
 			(*philo)->all->there_is_dead = 1;
-			// print_status(philo, "died");
 		}
-		// pthread_mutex_unlock(&(*philo)->all->death_mutex);
 		return (0);
 	}
 	return (1);

@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 02:09:49 by vafavard          #+#    #+#             */
-/*   Updated: 2025/09/01 10:50:23 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/09/01 12:52:08 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,6 @@ void	take_forks(t_philo *philo)
 		print_status(&philo, "\e[33mhas taken a fork\033[00m 🍴");
 	}
 }
-
 
 void	put_forks(t_philo *philo)
 {

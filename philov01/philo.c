@@ -6,16 +6,15 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/21 23:11:50 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/31 22:33:34 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/09/01 12:56:38 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-//./philo 6 75 60 69 deadlock
-//test 5 800 200 200 doit durer 40 secondes au moins
+
 void	pthread_gestion(t_all *all);
 int		alloc_all(t_args **args, t_all **all, long **tab, int size);
-void	fight_against_norm(t_args *args, t_all *all, long *tab);
+int		fight_against_norm(long *tab, int i);
 
 void	pthread_gestion(t_all *all)
 {
@@ -49,10 +48,19 @@ int	value_i(int *i)
 	return (0);
 }
 
-void	fight_against_norm(t_args *args, t_all *all, long *tab)
+int	fight_against_norm(long *tab, int i)
 {
-	printf("%sNo negatives\n%s", RED, END_COLOR);
-	ft_free_all(all, args, tab);
+	if (tab[i] < 0)
+	{
+		printf("%sNo negatives\n%s", RED, END_COLOR);
+		return (0);
+	}
+	if (tab[i] == 0)
+	{
+		printf("%sNo null value\n%s", RED, END_COLOR);
+		return (0);
+	}
+	return (1);
 }
 
 int	main(int argc, char **argv)
@@ -69,8 +77,8 @@ int	main(int argc, char **argv)
 		while (i < argc - 1)
 		{
 			tab[i] = ft_atol(argv[i + 1]);
-			if (tab[i] < 0)
-				return (fight_against_norm(args, all, tab), 1);
+			if (!fight_against_norm(tab, i))
+				return ((ft_free_all(all, args, tab)), 1);
 			i++;
 		}
 		if (!init_struct_5(args, tab, argc - 1))

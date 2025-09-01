@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 01:44:03 by vafavard          #+#    #+#             */
-/*   Updated: 2025/09/01 10:26:19 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/09/01 13:00:08 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,6 +130,6 @@ void	smart_sleep(long time_in_ms, t_all **all);
 //philo.c
 void	pthread_gestion(t_all *all);
 int		alloc_all(t_args **args, t_all **all, long **tab, int size);
-void	fight_against_norm(t_args *args, t_all *all, long *tab);
+int		fight_against_norm(long *tab, int i);
 
 #endif
