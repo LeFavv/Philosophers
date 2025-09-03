@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 03:13:15 by vafavard          #+#    #+#             */
-/*   Updated: 2025/09/03 14:04:28 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/09/03 21:57:14 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,9 @@ int	all_ate(t_philo *philo)
 		philo->all->there_is_dead = 1;
 		pthread_mutex_unlock(&philo->all->death_mutex);
 	}
+	pthread_mutex_lock(&philo->meal_mutex);
 	init_ate(&philo->all);
+	pthread_mutex_unlock(&philo->meal_mutex);
 	return (1);
 }
 

@@ -6,13 +6,13 @@
 #    By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/06/26 12:48:55 by kevwang           #+#    #+#              #
-#    Updated: 2025/09/03 15:48:46 by vafavard         ###   ########.fr        #
+#    Updated: 2025/09/03 21:58:27 by vafavard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 CC = cc
 
-CFLAGS = -Wall -Wextra -Werror -fsanitize=thread -g
+CFLAGS = -Wall -Wextra -Werror #-g -fsanitize=thread
 
 NAME = philo
 
@@ -33,7 +33,7 @@ SRC = ${FILE:.c=.o}
 all : ${NAME}
 
 ${NAME}: ${SRC}
-	${CC} ${CFLAGS} -o $@ $^
+	${CC} ${CFLAGS} -o $@ $^  ${LDLAGS}
 
 
 %.o:%.c
