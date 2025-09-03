@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/21 23:11:50 by vafavard          #+#    #+#             */
-/*   Updated: 2025/09/01 12:56:38 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/09/03 09:36:55 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ int	fight_against_norm(long *tab, int i)
 	}
 	if (tab[i] == 0)
 	{
-		printf("%sNo null value\n%s", RED, END_COLOR);
+		printf("%sError value\n%s", RED, END_COLOR);
 		return (0);
 	}
 	return (1);

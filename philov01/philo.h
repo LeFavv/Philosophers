@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 01:44:03 by vafavard          #+#    #+#             */
-/*   Updated: 2025/09/01 13:04:51 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/09/03 09:43:39 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ typedef struct s_philo
 	int				right_fork;
 	pthread_t		thread;
 	t_all			*all;
-	int				meals_eaten; //useless
+	int				meals_eaten;
 	struct timeval	last_meal;
 	pthread_mutex_t	meal_mutex;
 }	t_philo;
@@ -118,7 +118,7 @@ void	*monitor_routine(void *arg);
 void	put_the_right_fork(t_philo *philo);
 
 //thread_and_mutex
-int		mutex_destroy(t_all *all);
+void	mutex_destroy(t_all *all);
 int		join_threads(t_all *all);
 int		create_threads(t_all *all);
 
