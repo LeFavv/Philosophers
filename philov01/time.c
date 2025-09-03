@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 02:11:58 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/31 15:55:22 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/09/03 13:56:00 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,17 +37,26 @@ long	get_time_ms(void)
 
 void	smart_sleep(long time_in_ms, t_all **all)
 {
-	long	start_time;
-	int		dead;
+	struct timeval	start;
+	struct timeval	current;
+	long			elapsed;
+	int				dead;
 
-	start_time = get_time_ms();
-	while (get_time_ms() - start_time < time_in_ms)
+	gettimeofday(&start, NULL);
+	while (1)
 	{
+		gettimeofday(&current, NULL);
+		elapsed = time_diff_ms(&start, &current);
+		if (elapsed >= time_in_ms)
+			break ;
 		pthread_mutex_lock(&(*all)->death_mutex);
 		dead = (*all)->there_is_dead;
 		pthread_mutex_unlock(&(*all)->death_mutex);
 		if (dead)
 			break ;
-		usleep(200);
+		if (time_in_ms - elapsed > 1)
+			usleep(500);
+		else
+			usleep(50);
 	}
 }
