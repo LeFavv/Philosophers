@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 02:09:49 by vafavard          #+#    #+#             */
-/*   Updated: 2025/09/03 14:05:05 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/09/17 11:06:40 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,22 +20,27 @@ void	take_forks(t_philo *philo)
 {
 	if (philo->id % 2 == 0)
 	{
-		usleep(500);
+		// usleep(1000);
+		usleep(100 * philo->id);
+		// usleep(1000);
 		pthread_mutex_lock(&philo->all->forks[philo->left_fork]);
 		print_status(&philo, "\e[33mhas taken a fork\033[00m");
 		pthread_mutex_lock(&philo->all->forks[philo->right_fork]);
 		print_status(&philo, "\e[33mhas taken a fork\033[00m");
 	}
-	else if (philo->id % 2 != 0 && philo->id == philo->all->args.nb_philo)
-	{
-		usleep(500);
-		pthread_mutex_lock(&philo->all->forks[philo->left_fork]);
-		print_status(&philo, "\e[33mhas taken a fork\033[00m");
-		pthread_mutex_lock(&philo->all->forks[philo->right_fork]);
-		print_status(&philo, "\e[33mhas taken a fork\033[00m");
-	}
+	// else if (philo->id % 2 != 0 && philo->id == philo->all->args.nb_philo)
+	// {
+	// 	// usleep(500);
+	// 	usleep(1000);
+	// 	pthread_mutex_lock(&philo->all->forks[philo->left_fork]);
+	// 	print_status(&philo, "\e[33mhas taken a fork\033[00m");
+	// 	pthread_mutex_lock(&philo->all->forks[philo->right_fork]);
+	// 	print_status(&philo, "\e[33mhas taken a fork\033[00m");
+	// }
 	else
 	{
+		// usleep(1000);
+		usleep(100 * philo->id);
 		pthread_mutex_lock(&philo->all->forks[philo->right_fork]);
 		print_status(&philo, "\e[33mhas taken a fork\033[00m");
 		pthread_mutex_lock(&philo->all->forks[philo->left_fork]);

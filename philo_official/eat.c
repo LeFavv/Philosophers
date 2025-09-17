@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 03:13:15 by vafavard          #+#    #+#             */
-/*   Updated: 2025/09/03 21:57:14 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/09/17 11:17:39 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,21 +34,23 @@ int	all_ate(t_philo *philo)
 		philo->all->there_is_dead = 1;
 		pthread_mutex_unlock(&philo->all->death_mutex);
 	}
-	pthread_mutex_lock(&philo->meal_mutex);
+	// pthread_mutex_lock(&philo->meal_mutex);
 	init_ate(&philo->all);
-	pthread_mutex_unlock(&philo->meal_mutex);
+	// pthread_mutex_unlock(&philo->meal_mutex);
 	return (1);
 }
 
 int	eat(t_philo *philo)
 {
+	pthread_mutex_lock(&philo->all->eating_mutex);	
 	pthread_mutex_lock(&philo->meal_mutex);
 	philo->meals_eaten += 1;
 	gettimeofday(&philo->last_meal, NULL);
 	if (philo->all->args.nb_time_eat != -1)
 		philo->all->ate[philo->id - 1] = ATE;
 	pthread_mutex_unlock(&philo->meal_mutex);
-	pthread_mutex_lock(&philo->all->eating_mutex);
+	// pthread_mutex_unlock(&philo->all->eating_mutex);	
+	// pthread_mutex_lock(&philo->all->eating_mutex);
 	if (philo->all->args.nb_time_eat != -1)
 	{
 		if (all_ate(philo)

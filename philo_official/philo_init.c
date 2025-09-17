@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 03:03:55 by vafavard          #+#    #+#             */
-/*   Updated: 2025/09/03 15:48:12 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/09/17 11:21:57 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,10 +94,12 @@ void	init_ate(t_all **all)
 
 	i = 0;
 	pthread_mutex_lock(&(*all)->philo->meal_mutex);
+	// pthread_mutex_lock(&(*all)->eating_mutex);
 	while (i < (*all)->args.nb_philo)
 	{
 		(*all)->ate[i] = NEED_TO_EAT;
 		i++;
 	}
+	// pthread_mutex_unlock(&(*all)->eating_mutex);
 	pthread_mutex_unlock(&(*all)->philo->meal_mutex);
 }
