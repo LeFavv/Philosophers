@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 03:15:31 by vafavard          #+#    #+#             */
-/*   Updated: 2025/09/18 12:15:55 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/09/18 19:38:08 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,6 @@ void	*philosopher_routine(void *arg)
 	int		dead;
 
 	philo = (t_philo *)arg;
-	// usleep(500 * philo->id);
 	if (philo->all->args.nb_time_eat != -1)
 		return (philosopher_routine_argc_6(arg), NULL);
 	last_meal(philo);
