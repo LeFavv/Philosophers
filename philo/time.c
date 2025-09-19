@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 02:11:58 by vafavard          #+#    #+#             */
-/*   Updated: 2025/09/03 13:56:00 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/09/19 04:41:06 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,11 @@ long	time_diff_ms(struct timeval *start, struct timeval *end)
 
 	seconds = end->tv_sec - start->tv_sec;
 	microseconds = end->tv_usec - start->tv_usec;
+	if (microseconds < 0)
+	{
+		seconds--;
+		microseconds += 1000000;
+	}
 	return ((seconds * 1000) + (microseconds / 1000));
 }
 
