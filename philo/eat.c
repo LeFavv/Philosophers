@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 03:13:15 by vafavard          #+#    #+#             */
-/*   Updated: 2025/09/18 18:51:14 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/09/22 19:19:27 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,10 +72,12 @@ int	no_dead(t_philo **philo)
 	pthread_mutex_unlock(&(*philo)->meal_mutex);
 	if (time_since_last_meal >= (*philo)->all->args.time_to_die)
 	{
+		pthread_mutex_lock(&(*philo)->all->death_mutex);
 		if ((*philo)->all->there_is_dead == 0)
 		{
 			(*philo)->all->there_is_dead = 1;
 		}
+		pthread_mutex_unlock(&(*philo)->all->death_mutex);
 		return (0);
 	}
 	return (1);
