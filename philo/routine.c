@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 03:15:31 by vafavard          #+#    #+#             */
-/*   Updated: 2025/09/19 04:53:46 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/09/23 17:38:06 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,8 @@ void	*philosopher_routine_argc_6(void *arg)
 
 	philo = (t_philo *)arg;
 	last_meal(philo);
+	if (philo->id % 2 == 0)
+    	usleep(1000);
 	if (philo->all->args.nb_philo == 1)
 		return (philosopher_routine_solo(philo), NULL);
 	while (1)
@@ -59,6 +61,9 @@ void	*philosopher_routine_argc_6(void *arg)
 		put_the_right_fork(philo);
 		print_status(&philo, "\e[34mis sleeping\033[00m");
 		smart_sleep(philo->all->args.time_to_sleep, &philo->all);
+		if (philo->all->args.nb_philo <= 15) //test
+		    usleep(1000);
+
 	}
 	return (NULL);
 }
@@ -72,6 +77,8 @@ void	*philosopher_routine(void *arg)
 	if (philo->all->args.nb_time_eat != -1)
 		return (philosopher_routine_argc_6(arg), NULL);
 	last_meal(philo);
+	if (philo->id % 2 == 0)
+    	usleep(1000);
 	if (philo->all->args.nb_philo == 1)
 		return (philosopher_routine_solo(philo), NULL);
 	while (1)
@@ -87,6 +94,9 @@ void	*philosopher_routine(void *arg)
 		put_the_right_fork(philo);
 		print_status(&philo, "\e[34mis sleeping\033[00m");
 		smart_sleep(philo->all->args.time_to_sleep, &philo->all);
+		if (philo->all->args.nb_philo <= 15) //test
+		    usleep(1000);
+
 	}
 	return (NULL);
 }
@@ -115,7 +125,8 @@ void	*monitor_routine(void *arg)
 			}
 			i++;
 		}
-		usleep(500);
+		// usleep(500);
+		usleep(200);
 	}
 	return (NULL);
 }
