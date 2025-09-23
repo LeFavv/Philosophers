@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 02:11:58 by vafavard          #+#    #+#             */
-/*   Updated: 2025/09/19 04:41:06 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/09/23 16:27:16 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 long	time_diff_ms(struct timeval *start, struct timeval *end);
 long	get_time_ms(void);
 void	smart_sleep(long time_in_ms, t_all **all);
+long	norme_destructor(long time_to_die, long elapsed);
 
 long	time_diff_ms(struct timeval *start, struct timeval *end)
 {
@@ -40,6 +41,14 @@ long	get_time_ms(void)
 	return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
 }
 
+long	norme_destructor(long time_to_die, long elapsed)
+{
+	long	time_left;
+
+	time_left = time_to_die - elapsed;
+	return (time_left);
+}
+
 void	smart_sleep(long time_in_ms, t_all **all)
 {
 	struct timeval	start;
@@ -58,6 +67,8 @@ void	smart_sleep(long time_in_ms, t_all **all)
 		dead = (*all)->there_is_dead;
 		pthread_mutex_unlock(&(*all)->death_mutex);
 		if (dead)
+			break ;
+		if (norme_destructor((*all)->args.time_to_die, elapsed) < 20)
 			break ;
 		if (time_in_ms - elapsed > 1)
 			usleep(500);

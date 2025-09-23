@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 02:09:49 by vafavard          #+#    #+#             */
-/*   Updated: 2025/09/19 04:54:26 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/09/23 16:28:41 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,30 +18,22 @@ void	put_forks_odds(t_philo *philo);
 
 void	take_forks(t_philo *philo)
 {
-	if (philo->id % 2 == 0)
+	int	first_fork;
+	int	second_fork;
+
+	first_fork = philo->left_fork;
+	second_fork = philo->right_fork;
+	if (philo->id % 2 != 0)
+		usleep(philo->all->args.time_to_eat);
+	if (first_fork > second_fork)
 	{
-		usleep(400);
-		pthread_mutex_lock(&philo->all->forks[philo->left_fork]);
-		print_status(&philo, "\e[33mhas taken a fork\033[00m");
-		pthread_mutex_lock(&philo->all->forks[philo->right_fork]);
-		print_status(&philo, "\e[33mhas taken a fork\033[00m");
+		first_fork = philo->right_fork;
+		second_fork = philo->left_fork;
 	}
-	else if (philo->id % 2 != 0 && philo->id == philo->all->args.nb_philo)
-	{
-		usleep(300);
-		pthread_mutex_lock(&philo->all->forks[philo->left_fork]);
-		print_status(&philo, "\e[33mhas taken a fork\033[00m");
-		pthread_mutex_lock(&philo->all->forks[philo->right_fork]);
-		print_status(&philo, "\e[33mhas taken a fork\033[00m");
-	}
-	else
-	{
-		usleep(300);
-		pthread_mutex_lock(&philo->all->forks[philo->right_fork]);
-		print_status(&philo, "\e[33mhas taken a fork\033[00m");
-		pthread_mutex_lock(&philo->all->forks[philo->left_fork]);
-		print_status(&philo, "\e[33mhas taken a fork\033[00m");
-	}
+	pthread_mutex_lock(&philo->all->forks[first_fork]);
+	print_status(&philo, "\e[33mhas taken a fork\033[00m");
+	pthread_mutex_lock(&philo->all->forks[second_fork]);
+	print_status(&philo, "\e[33mhas taken a fork\033[00m");
 }
 
 void	put_forks(t_philo *philo)
