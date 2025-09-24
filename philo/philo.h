@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 01:44:03 by vafavard          #+#    #+#             */
-/*   Updated: 2025/09/24 13:50:00 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/09/24 15:21:53 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,6 +132,7 @@ long	norme_destructor(long time_to_die, long elapsed);
 //philo.c
 void	pthread_gestion(t_all *all);
 int		alloc_all(t_args **args, t_all **all, long **tab, int size);
-int		fight_against_norm(long *tab, int i);
+int		check_args(long *tab, int i);
+int		value_i(int *i);
 
 #endif

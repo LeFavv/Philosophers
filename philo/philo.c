@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/21 23:11:50 by vafavard          #+#    #+#             */
-/*   Updated: 2025/09/24 15:15:32 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/09/24 15:21:39 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 
 void	pthread_gestion(t_all *all);
 int		alloc_all(t_args **args, t_all **all, long **tab, int size);
-int		fight_against_norm(long *tab, int i);
+int		check_args(long *tab, int i);
+int		value_i(int *i);
 
 void	pthread_gestion(t_all *all)
 {
@@ -48,7 +49,7 @@ int	value_i(int *i)
 	return (0);
 }
 
-int	fight_against_norm(long *tab, int i)
+int	check_args(long *tab, int i)
 {
 	if (tab[i] < 0)
 	{
@@ -87,7 +88,7 @@ int	main(int argc, char **argv)
 		while (i < argc - 1)
 		{
 			tab[i] = ft_atol(argv[i + 1]);
-			if (!fight_against_norm(tab, i))
+			if (!check_args(tab, i))
 				return ((ft_free_all(all, args, tab)), 1);
 			i++;
 		}
