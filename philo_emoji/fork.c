@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 02:09:49 by vafavard          #+#    #+#             */
-/*   Updated: 2025/09/24 14:20:38 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/09/24 12:43:11 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,9 @@ void	take_forks(t_philo *philo)
 		second_fork = philo->left_fork;
 	}
 	pthread_mutex_lock(&philo->all->forks[first_fork]);
-	print_status(&philo, "\e[33mhas taken a fork\033[00m");
+	print_status(&philo, "\e[33mhas taken a fork\033[00m🍴");
 	pthread_mutex_lock(&philo->all->forks[second_fork]);
-	print_status(&philo, "\e[33mhas taken a fork\033[00m");
+	print_status(&philo, "\e[33mhas taken a fork\033[00m🍴");
 }
 
 void	put_forks(t_philo *philo)

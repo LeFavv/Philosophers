@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 03:15:31 by vafavard          #+#    #+#             */
-/*   Updated: 2025/09/24 14:21:20 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/09/24 13:49:10 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	philosopher_routine_solo(t_philo *philo)
 {
 	int	dead;
 
-	print_status(&philo, "has taken a fork");
+	print_status(&philo, "has taken a fork🍴");
 	usleep(philo->all->args.time_to_die * 1000);
 	if_dead(philo, &dead);
 }
@@ -51,13 +51,13 @@ void	*philosopher_routine_argc_6(void *arg)
 		pthread_mutex_unlock(&philo->all->death_mutex);
 		if (dead || philo->all->args.nb_philo <= 1)
 			break ;
-		print_status(&philo, "is thinking");
+		print_status(&philo, "is thinking🖥️");
 		take_forks(philo);
-		print_status(&philo, "\e[32mis eating\033[00m");
+		print_status(&philo, "\e[32mis eating\033[00m🍔");
 		if (!eat(philo))
 			return (put_the_right_fork(philo), NULL);
 		put_the_right_fork(philo);
-		print_status(&philo, "\e[34mis sleeping\033[00m");
+		print_status(&philo, "\e[34mis sleeping\033[00m💤");
 		smart_sleep(philo->all->args.time_to_sleep, &philo->all);
 		norm_breaker(philo, 2);
 	}
@@ -80,13 +80,13 @@ void	*philosopher_routine(void *arg)
 		if_dead(philo, &dead);
 		if (dead || philo->all->args.nb_philo <= 1)
 			break ;
-		print_status(&philo, "is thinking");
+		print_status(&philo, "is thinking🖥️");
 		take_forks(philo);
-		print_status(&philo, "\e[32mis eating\033[00m");
+		print_status(&philo, "\e[32mis eating\033[00m🍔");
 		if (!eat(philo))
 			break ;
 		put_the_right_fork(philo);
-		print_status(&philo, "\e[34mis sleeping\033[00m");
+		print_status(&philo, "\e[34mis sleeping\033[00m💤");
 		smart_sleep(philo->all->args.time_to_sleep, &philo->all);
 		norm_breaker(philo, 1);
 	}
