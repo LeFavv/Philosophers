@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/21 23:11:50 by vafavard          #+#    #+#             */
-/*   Updated: 2025/09/03 15:43:28 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/09/24 15:15:32 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,16 @@ int	fight_against_norm(long *tab, int i)
 	if (tab[i] == 0)
 	{
 		printf("%sError value\n%s", RED, END_COLOR);
+		return (0);
+	}
+	if (tab[0] > 200)
+	{
+		printf("%sToo many philos : Max => 200\n%s", RED, END_COLOR);
+		return (0);
+	}
+	if (i != 0 && tab[i] > 2000)
+	{
+		printf("%svalue should be > 0 && <= 2000\n%s", RED, END_COLOR);
 		return (0);
 	}
 	return (1);
