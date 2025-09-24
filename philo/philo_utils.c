@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 02:41:27 by vafavard          #+#    #+#             */
-/*   Updated: 2025/08/31 15:48:10 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/09/24 13:50:49 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ long	ft_atol(char *str);
 int		ft_strcmp(char *s1, char *s2);
 void	last_meal(t_philo *philo);
 void	if_dead(t_philo *philo, int *dead);
+void	norm_breaker(t_philo *philo, int i);
 
 long	ft_atol(char *str)
 {
@@ -64,4 +65,19 @@ void	if_dead(t_philo *philo, int *dead)
 	pthread_mutex_lock(&philo->all->death_mutex);
 	*dead = philo->all->there_is_dead;
 	pthread_mutex_unlock(&philo->all->death_mutex);
+}
+
+void	norm_breaker(t_philo *philo, int i)
+{
+	if (i == 1)
+	{
+		last_meal(philo);
+		if (philo->id % 2 == 0)
+			usleep(1000);
+	}
+	else
+	{
+		if (philo->all->args.nb_philo <= 15)
+			usleep(1000);
+	}
 }

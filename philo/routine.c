@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 03:15:31 by vafavard          #+#    #+#             */
-/*   Updated: 2025/09/23 17:38:06 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/09/24 13:49:10 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	philosopher_routine_solo(t_philo *philo)
 {
 	int	dead;
 
-	print_status(&philo, "has taken a fork");
+	print_status(&philo, "has taken a fork🍴");
 	usleep(philo->all->args.time_to_die * 1000);
 	if_dead(philo, &dead);
 }
@@ -41,9 +41,7 @@ void	*philosopher_routine_argc_6(void *arg)
 	int		dead;
 
 	philo = (t_philo *)arg;
-	last_meal(philo);
-	if (philo->id % 2 == 0)
-    	usleep(1000);
+	norm_breaker(philo, 1);
 	if (philo->all->args.nb_philo == 1)
 		return (philosopher_routine_solo(philo), NULL);
 	while (1)
@@ -53,17 +51,15 @@ void	*philosopher_routine_argc_6(void *arg)
 		pthread_mutex_unlock(&philo->all->death_mutex);
 		if (dead || philo->all->args.nb_philo <= 1)
 			break ;
-		print_status(&philo, "is thinking");
+		print_status(&philo, "is thinking🖥️");
 		take_forks(philo);
-		print_status(&philo, "\e[32mis eating\033[00m");
+		print_status(&philo, "\e[32mis eating\033[00m🍔");
 		if (!eat(philo))
 			return (put_the_right_fork(philo), NULL);
 		put_the_right_fork(philo);
-		print_status(&philo, "\e[34mis sleeping\033[00m");
+		print_status(&philo, "\e[34mis sleeping\033[00m💤");
 		smart_sleep(philo->all->args.time_to_sleep, &philo->all);
-		if (philo->all->args.nb_philo <= 15) //test
-		    usleep(1000);
-
+		norm_breaker(philo, 2);
 	}
 	return (NULL);
 }
@@ -76,9 +72,7 @@ void	*philosopher_routine(void *arg)
 	philo = (t_philo *)arg;
 	if (philo->all->args.nb_time_eat != -1)
 		return (philosopher_routine_argc_6(arg), NULL);
-	last_meal(philo);
-	if (philo->id % 2 == 0)
-    	usleep(1000);
+	norm_breaker(philo, 1);
 	if (philo->all->args.nb_philo == 1)
 		return (philosopher_routine_solo(philo), NULL);
 	while (1)
@@ -86,17 +80,15 @@ void	*philosopher_routine(void *arg)
 		if_dead(philo, &dead);
 		if (dead || philo->all->args.nb_philo <= 1)
 			break ;
-		print_status(&philo, "is thinking");
+		print_status(&philo, "is thinking🖥️");
 		take_forks(philo);
-		print_status(&philo, "\e[32mis eating\033[00m");
+		print_status(&philo, "\e[32mis eating\033[00m🍔");
 		if (!eat(philo))
 			break ;
 		put_the_right_fork(philo);
-		print_status(&philo, "\e[34mis sleeping\033[00m");
+		print_status(&philo, "\e[34mis sleeping\033[00m💤");
 		smart_sleep(philo->all->args.time_to_sleep, &philo->all);
-		if (philo->all->args.nb_philo <= 15) //test
-		    usleep(1000);
-
+		norm_breaker(philo, 1);
 	}
 	return (NULL);
 }
@@ -125,7 +117,6 @@ void	*monitor_routine(void *arg)
 			}
 			i++;
 		}
-		// usleep(500);
 		usleep(200);
 	}
 	return (NULL);

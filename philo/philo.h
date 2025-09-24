@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 01:44:03 by vafavard          #+#    #+#             */
-/*   Updated: 2025/09/23 16:28:48 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/09/24 13:50:00 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,6 +105,7 @@ long	ft_atol(char *str);
 int		ft_strcmp(char *s1, char *s2);
 void	last_meal(t_philo *philo);
 void	if_dead(t_philo *philo, int *dead);
+void	norm_breaker(t_philo *philo, int i);
 
 //print
 void	print_status(t_philo **philo, char *str);

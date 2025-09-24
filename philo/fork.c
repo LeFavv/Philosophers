@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 02:09:49 by vafavard          #+#    #+#             */
-/*   Updated: 2025/09/23 17:01:10 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/09/24 12:43:11 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,6 @@ void	take_forks(t_philo *philo)
 	int	first_fork;
 	int	second_fork;
 
-	// Micro-délai uniquement pour les petits groupes
-	// if (philo->all->args.nb_philo <= 10)
-	// 	usleep(100);
-	// Alternance de l'ordre de prise des fourchettes selon l'ID
 	if (philo->id % 2 == 0)
 	{
 		first_fork = philo->left_fork;
@@ -36,9 +32,9 @@ void	take_forks(t_philo *philo)
 		second_fork = philo->left_fork;
 	}
 	pthread_mutex_lock(&philo->all->forks[first_fork]);
-	print_status(&philo, "\e[33mhas taken a fork\033[00m");
+	print_status(&philo, "\e[33mhas taken a fork\033[00m🍴");
 	pthread_mutex_lock(&philo->all->forks[second_fork]);
-	print_status(&philo, "\e[33mhas taken a fork\033[00m");
+	print_status(&philo, "\e[33mhas taken a fork\033[00m🍴");
 }
 
 void	put_forks(t_philo *philo)
