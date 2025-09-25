@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 03:13:15 by vafavard          #+#    #+#             */
-/*   Updated: 2025/09/25 15:22:16 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/09/25 15:56:40 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,8 +69,6 @@ int	no_dead(t_philo **philo)
 	gettimeofday(&current_time, NULL);
 	pthread_mutex_lock(&(*philo)->meal_mutex);
 	time_since_last_meal = time_diff_ms(&(*philo)->last_meal, &current_time);
-	// if (time_since_last_meal > (*philo)->all->args.time_to_die)
-	// 	printf("%ld\n", time_since_last_meal);
 	pthread_mutex_unlock(&(*philo)->meal_mutex);
 	if (time_since_last_meal >= (*philo)->all->args.time_to_die)
 	{
