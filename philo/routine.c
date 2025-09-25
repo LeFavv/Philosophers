@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/30 03:15:31 by vafavard          #+#    #+#             */
-/*   Updated: 2025/09/24 14:21:20 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/09/25 15:27:09 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ void	*philosopher_routine(void *arg)
 		put_the_right_fork(philo);
 		print_status(&philo, "\e[34mis sleeping\033[00m");
 		smart_sleep(philo->all->args.time_to_sleep, &philo->all);
-		norm_breaker(philo, 1);
+		norm_breaker(philo, 3);
 	}
 	return (NULL);
 }

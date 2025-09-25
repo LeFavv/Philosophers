@@ -6,7 +6,7 @@
 /*   By: vafavard <vafavard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 02:41:27 by vafavard          #+#    #+#             */
-/*   Updated: 2025/09/24 14:52:56 by vafavard         ###   ########.fr       */
+/*   Updated: 2025/09/25 15:27:00 by vafavard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,12 @@ void	norm_breaker(t_philo *philo, int i)
 	else
 	{
 		if (philo->all->args.nb_philo <= 15)
+			usleep(1000);
+	}
+	
+	if (i == 3)
+	{
+		if (philo->id % 2 == 0)
 			usleep(1000);
 	}
 }
